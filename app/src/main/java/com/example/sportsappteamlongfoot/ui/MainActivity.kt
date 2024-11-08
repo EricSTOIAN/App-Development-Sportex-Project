@@ -1,4 +1,4 @@
-package com.example.sportsappteamlongfoot
+package com.example.sportsappteamlongfoot.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
