@@ -20,7 +20,10 @@ android {
         }
     }
 
+
     buildTypes {
+        //buildConfigField("String", "GEMINI_API_KEY", "\"${GEMINI_API_KEY}\"")
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -70,5 +73,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // add the dependency for the Google AI client SDK for Android
-    implementation(libs.google.generativeai)
+    //implementation(libs.google.generativeai)
 }
