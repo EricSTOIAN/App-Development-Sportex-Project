@@ -51,7 +51,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun AIChatBox(modifier: Modifier = Modifier){
     var userInput by rememberSaveable { mutableStateOf("") }
     var aiResponse by rememberSaveable {mutableStateOf("")}
-    //val aiModel = aiModel
+    val aiModel = AIModel()
 
     Box(modifier = modifier.padding(top = 50.dp)){
         Text(
@@ -68,7 +68,9 @@ fun AIChatBox(modifier: Modifier = Modifier){
             modifier = Modifier.padding(top = 75.dp)
         )
 
-        Button(onClick = { /*aiResponse = runBlocking { aiModel.GenerateAIResponse(userInput).toString() }*/ },
+        Button(onClick = {
+            aiResponse = ""
+            aiResponse = runBlocking { aiModel.GenerateAIResponse(userInput).toString() } },
             modifier= Modifier.padding(start = 150.dp, top = 150.dp)
         ) {
             Text(
@@ -78,7 +80,7 @@ fun AIChatBox(modifier: Modifier = Modifier){
 
         Text(
             modifier = Modifier.padding(top = 260.dp),
-            text = "aiResponsefjsadfhsdkajfbsakbvlashfbfbakhsdbchksdabsdalhdsjkfhlsadkhfksdjahfkjsldahfkjlasdhfkjash",
+            text = aiResponse,
             fontSize = 30.sp,
             lineHeight = 35.sp
         )
@@ -92,12 +94,5 @@ fun GreetingPreview() {
     SportsAppTeamLongFootTheme {
         //val mockAIModel = AIModel()
         AIChatBox(modifier = Modifier.fillMaxSize())
-    }
-}
-
-
-class MockAIModel {
-    fun GenerateAIResponse(input: String): String {
-        return "Mock response for '$input'"
     }
 }

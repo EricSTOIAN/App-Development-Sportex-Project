@@ -24,7 +24,9 @@ private val prompt = "Write a story about a magic backpack."
 //Uses coroutines
 private val response = runBlocking{generativeModel.generateContent(prompt)}
 
-    suspend fun GenerateAIResponse(prompt: String): GenerateContentResponse {
-        return generativeModel.generateContent(prompt)
+    suspend fun GenerateAIResponse(prompt: String): String? {
+
+        val response = generativeModel.generateContent(prompt)
+        return response.text
     }
 }
