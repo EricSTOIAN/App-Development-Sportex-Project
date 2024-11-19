@@ -77,7 +77,6 @@ fun AIChatBox(modifier: Modifier = Modifier){
                 text = "Generate"
             )
         }
-
         Text(
             modifier = Modifier.padding(top = 260.dp),
             text = aiResponse,
