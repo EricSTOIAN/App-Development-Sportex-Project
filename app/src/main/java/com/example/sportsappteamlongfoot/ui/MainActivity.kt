@@ -46,37 +46,41 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
+
 @Composable
 fun AIChatBox(modifier: Modifier = Modifier){
     var userInput by rememberSaveable { mutableStateOf("") }
     var aiResponse by rememberSaveable {mutableStateOf("")}
-    val aiModel = AIModel()
+    //val aiModel = aiModel
 
-    Box(modifier){
+    Box(modifier = modifier.padding(top = 50.dp)){
         Text(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(top = 25.dp),
             text = "What can I help you with",
             fontSize = 30.sp
         )
-
+        
         TextField(
             value = userInput,
             onValueChange = { userInput = it},
             textStyle = TextStyle(textAlign = TextAlign.Center),
-            label = { Text(text = "Please enter your name")},
+            label = { Text(text = "Type anything")},
             modifier = Modifier.padding(top = 75.dp)
         )
 
-        Button(onClick = { aiResponse = runBlocking { aiModel.GenerateAIResponse(userInput).toString() } }) {
+        Button(onClick = { /*aiResponse = runBlocking { aiModel.GenerateAIResponse(userInput).toString() }*/ },
+            modifier= Modifier.padding(start = 150.dp, top = 150.dp)
+        ) {
             Text(
                 text = "Generate"
             )
         }
 
         Text(
-            modifier = Modifier.padding(5.dp),
-            text = aiResponse,
-            fontSize = 30.sp
+            modifier = Modifier.padding(top = 260.dp),
+            text = "aiResponsefjsadfhsdkajfbsakbvlashfbfbakhsdbchksdabsdalhdsjkfhlsadkhfksdjahfkjsldahfkjlasdhfkjash",
+            fontSize = 30.sp,
+            lineHeight = 35.sp
         )
     }
 }
@@ -86,6 +90,14 @@ fun AIChatBox(modifier: Modifier = Modifier){
 @Composable
 fun GreetingPreview() {
     SportsAppTeamLongFootTheme {
+        //val mockAIModel = AIModel()
         AIChatBox(modifier = Modifier.fillMaxSize())
+    }
+}
+
+
+class MockAIModel {
+    fun GenerateAIResponse(input: String): String {
+        return "Mock response for '$input'"
     }
 }
