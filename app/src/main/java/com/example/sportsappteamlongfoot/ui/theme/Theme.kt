@@ -12,9 +12,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF3699F1),
-    secondary = Color(0xFFA1C5F8),
-    tertiary = Color(0xFFB5D0FA),
+    primary = Color(0xFF75AFF5),
+    secondary = Color(0xFF75AFF5),
+    tertiary = Color(0xFF8CBFF6),
+    background = Color(0xFFB5D0FA),
+    surface = Color(0xFFA1C5F8),
+    onPrimary = Color(0xFF1A1E25),
+    onSecondary = Color(0xFF1A1E25),
+    onBackground =Color(0xFF1A1E25),
+    onSurface =Color(0xFF1A1E25),
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -33,7 +39,7 @@ private val LightColorScheme = lightColorScheme(
 fun SportsAppTeamLongFootTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

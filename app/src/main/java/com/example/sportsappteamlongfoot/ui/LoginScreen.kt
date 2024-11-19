@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
@@ -29,34 +31,31 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, modifier: Modifier = Modifier)
     ) {
         Text(
             text = "Login",
-            style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        BasicTextField(
+        OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            label = { Text("Username", color = Color(0xFF1A1E25)) },
+            modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            decorationBox = { innerTextField ->
-                if (username.isEmpty()) Text(text = "Username", color = MaterialTheme.colorScheme.onSurface)
-                innerTextField()
-            }
+
         )
+
         Spacer(modifier = Modifier.height(8.dp))
-        BasicTextField(
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            label = { Text("Password" , color = Color(0xFF1A1E25)) },
+            modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            decorationBox = { innerTextField ->
-                if (password.isEmpty()) Text(text = "Password", color = MaterialTheme.colorScheme.onSurface)
-                innerTextField()
-            }
+            visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
+
         Button(onClick = { /* login logic */ }) {
             Text(text = "Login")
         }
