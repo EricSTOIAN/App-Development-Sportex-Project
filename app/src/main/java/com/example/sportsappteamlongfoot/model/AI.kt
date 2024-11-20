@@ -11,7 +11,7 @@ class AIModel(){
     //Using Gemini
     val generativeModel = GenerativeModel(
     // For text-only input, use the gemini-pro model
-    modelName = "gemini-pro",
+    modelName = "gemini-1.5-pro",
 
     //WARNING: DO NOT USE THIS API KEY FOR ANYTHING ELSE.
     apiKey = "AIzaSyAHNhbV0vf6dV1xSTvHHxhjS0qzd1POPBc",
