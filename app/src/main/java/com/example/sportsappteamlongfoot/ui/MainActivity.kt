@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sportsappteamlongfoot.model.AIModel
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
