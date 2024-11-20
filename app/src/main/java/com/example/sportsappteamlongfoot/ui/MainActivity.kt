@@ -7,10 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.sportsappteamlongfoot.ui.LoginScreen
+import com.example.sportsappteamlongfoot.ui.RegisterScreen
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +19,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SportsAppTeamLongFootTheme {
+                var isLoginScreen by remember { mutableStateOf(true) }
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    if (isLoginScreen) {
+                        LoginScreen(
+                            onNavigateToRegister = { isLoginScreen = false },
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    } else {
+                        RegisterScreen(
+                            onNavigateToLogin = { isLoginScreen = true },
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SportsAppTeamLongFootTheme {
-        Greeting("Android")
     }
 }
