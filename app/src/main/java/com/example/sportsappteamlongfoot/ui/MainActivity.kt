@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,9 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.example.sportsappteamlongfoot.ui.LoginScreen
 import com.example.sportsappteamlongfoot.ui.RegisterScreen
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
+import com.example.sportsappteamlongfoot.data.DataStoreManager
+import com.example.sportsappteamlongfoot.data.DataStoreManager.dataStore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +24,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             SportsAppTeamLongFootTheme {
                 var isLoginScreen by remember { mutableStateOf(true) }
+                val context = LocalContext.current
+                val dataStore = context.dataStore
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     if (isLoginScreen) {
                         LoginScreen(
