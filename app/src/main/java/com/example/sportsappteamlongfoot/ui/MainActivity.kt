@@ -112,21 +112,6 @@ fun AIChatBox(modifier: Modifier = Modifier){
     }
 }
 
-@Composable
-fun AIResponse(aiModel: AIModel, userInput: String){
-    var aiResponseInUI by rememberSaveable {mutableStateOf("")}
-    LaunchedEffect(Unit){
-        aiResponseInUI = aiModel.GenerateAIResponse(userInput).toString()
-    }
-
-    Text(
-        modifier = Modifier.padding(top = 260.dp),
-        text = aiResponseInUI,
-        fontSize = 30.sp,
-        lineHeight = 35.sp
-    )
-}
-
 
 @Preview(showBackground = true)
 @Composable
