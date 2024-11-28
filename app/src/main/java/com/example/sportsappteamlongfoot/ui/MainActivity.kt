@@ -1,7 +1,6 @@
 package com.example.sportsappteamlongfoot.ui
 
 import android.os.Bundle
-import android.widget.Scroller
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,10 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sportsappteamlongfoot.model.AIModel
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +57,9 @@ fun AIChatBox(modifier: Modifier = Modifier){
     var aiResponseInUI by rememberSaveable {mutableStateOf("")}
     val aiModel = AIModel()
     val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+    var btnIsEnabled by rememberSaveable { mutableStateOf(true) }
+
 
     Box(modifier = modifier.padding(top = 50.dp).verticalScroll(scrollState)){
         Text(
@@ -78,15 +78,25 @@ fun AIChatBox(modifier: Modifier = Modifier){
 
 
         Button(onClick = {
-            runBlocking{
-                    aiResponseInUI = ""
-                    aiResponseInUI = aiModel.GenerateAIResponse(userInput).toString()
+            aiResponseInUI = " "
+            btnIsEnabled = false
+            coroutineScope.launch{
+                    val response = aiModel.GenerateAIResponse(userInput).toString()
+
+                    //Gives typing effect
+                    for(i in response.indices){
+                        aiResponseInUI = response.substring(0, i + 1)
+                        delay(50) // Delay to simulate typing
+                    }
+
+                    btnIsEnabled = true
                 }
             },
-            modifier= Modifier.padding(start = 150.dp, top = 150.dp)
+            modifier= Modifier.padding(start = 150.dp, top = 150.dp),
+            enabled = btnIsEnabled
         ) {
             Text(
-                text = "Generate"
+                text = if (!btnIsEnabled) "Typing.." else "Generate"
             )
         }
 
