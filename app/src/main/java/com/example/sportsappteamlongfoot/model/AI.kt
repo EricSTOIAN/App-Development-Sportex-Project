@@ -7,7 +7,7 @@ import com.google.firebase.vertexai.*
 import kotlinx.coroutines.*
 
 //Refer to the following instructions: https://medium.com/@bhoomigadhiya/integrating-googles-gemini-into-the-android-app-520508975c2e
-class AIModel(){
+class AIModel{
     //Using Gemini
     val generativeModel = GenerativeModel(
     // For text-only input, use the gemini-pro model
@@ -15,7 +15,6 @@ class AIModel(){
 
     //WARNING: DO NOT USE THIS API KEY FOR ANYTHING ELSE.
     apiKey = "AIzaSyAHNhbV0vf6dV1xSTvHHxhjS0qzd1POPBc",
-
 )
 
 //Uses coroutines

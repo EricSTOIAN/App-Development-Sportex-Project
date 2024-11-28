@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sportsappteamlongfoot.model.AIModel
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -59,7 +61,6 @@ fun AIChatBox(modifier: Modifier = Modifier){
     val aiModel = AIModel()
     val scrollState = rememberScrollState()
 
-
     Box(modifier = modifier.padding(top = 50.dp).verticalScroll(scrollState)){
         Text(
             modifier = Modifier.padding(top = 25.dp),
@@ -75,10 +76,11 @@ fun AIChatBox(modifier: Modifier = Modifier){
             modifier = Modifier.padding(top = 75.dp)
         )
 
+
         Button(onClick = {
-            runBlocking {
-                aiResponseInUI = ""
-                aiResponseInUI = aiModel.GenerateAIResponse(userInput).toString()
+            runBlocking{
+                    aiResponseInUI = ""
+                    aiResponseInUI = aiModel.GenerateAIResponse(userInput).toString()
                 }
             },
             modifier= Modifier.padding(start = 150.dp, top = 150.dp)
@@ -97,6 +99,20 @@ fun AIChatBox(modifier: Modifier = Modifier){
     }
 }
 
+@Composable
+fun AIResponse(aiModel: AIModel, userInput: String){
+    var aiResponseInUI by rememberSaveable {mutableStateOf("")}
+    LaunchedEffect(Unit){
+        aiResponseInUI = aiModel.GenerateAIResponse(userInput).toString()
+    }
+
+    Text(
+        modifier = Modifier.padding(top = 260.dp),
+        text = aiResponseInUI,
+        fontSize = 30.sp,
+        lineHeight = 35.sp
+    )
+}
 
 
 @Preview(showBackground = true)
