@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +60,7 @@ fun AIChatBox(modifier: Modifier = Modifier){
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var btnIsEnabled by rememberSaveable { mutableStateOf(true) }
+    val focusManager = LocalFocusManager.current
 
 
     Box(modifier = modifier.padding(top = 50.dp).verticalScroll(scrollState)){
@@ -80,13 +82,14 @@ fun AIChatBox(modifier: Modifier = Modifier){
         Button(onClick = {
             aiResponseInUI = " "
             btnIsEnabled = false
+            focusManager.clearFocus() //Hides the keyboard
             coroutineScope.launch{
                     val response = aiModel.GenerateAIResponse(userInput).toString()
 
                     //Gives typing effect
                     for(i in response.indices){
                         aiResponseInUI = response.substring(0, i + 1)
-                        delay(50) // Delay to simulate typing
+                        delay(20) // Delay to simulate typing
                     }
 
                     btnIsEnabled = true
@@ -96,7 +99,7 @@ fun AIChatBox(modifier: Modifier = Modifier){
             enabled = btnIsEnabled
         ) {
             Text(
-                text = if (!btnIsEnabled) "Typing.." else "Generate"
+                text = if (!btnIsEnabled) "Typing..." else "Generate"
             )
         }
 
