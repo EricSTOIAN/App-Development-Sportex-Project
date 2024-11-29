@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.vertexai)
     implementation(libs.generativeai)
+    implementation(libs.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

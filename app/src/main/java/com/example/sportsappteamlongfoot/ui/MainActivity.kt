@@ -52,66 +52,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 
-@Composable
-fun AIChatBox(modifier: Modifier = Modifier){
-    var userInput by rememberSaveable { mutableStateOf("") }
-    var aiResponseInUI by rememberSaveable {mutableStateOf("")}
-    val aiModel = AIModel()
-    val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope()
-    var btnIsEnabled by rememberSaveable { mutableStateOf(true) }
-    val focusManager = LocalFocusManager.current
-
-
-    Box(modifier = modifier.padding(top = 50.dp).verticalScroll(scrollState)){
-        Text(
-            modifier = Modifier.padding(top = 25.dp),
-            text = "What can I help you with",
-            fontSize = 30.sp
-        )
-        
-        TextField(
-            value = userInput,
-            onValueChange = { userInput = it},
-            textStyle = TextStyle(textAlign = TextAlign.Center),
-            label = { Text(text = "Type anything")},
-            modifier = Modifier.padding(top = 75.dp)
-        )
-
-
-        Button(onClick = {
-            aiResponseInUI = " "
-            btnIsEnabled = false
-            focusManager.clearFocus() //Hides the keyboard
-            coroutineScope.launch{
-                    val response = aiModel.GenerateAIResponse(userInput).toString()
-
-                    //Gives typing effect
-                    for(i in response.indices){
-                        aiResponseInUI = response.substring(0, i + 1)
-                        delay(20) // Delay to simulate typing
-                    }
-
-                    btnIsEnabled = true
-                }
-            },
-            modifier= Modifier.padding(start = 150.dp, top = 150.dp),
-            enabled = btnIsEnabled
-        ) {
-            Text(
-                text = if (!btnIsEnabled) "Typing..." else "Generate"
-            )
-        }
-
-        Text(
-            modifier = Modifier.padding(top = 260.dp),
-            text = aiResponseInUI,
-            fontSize = 30.sp,
-            lineHeight = 35.sp
-        )
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable

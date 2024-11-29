@@ -1,8 +1,8 @@
 package com.example.sportsappteamlongfoot.model
 
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.common.ServerException
 import com.google.ai.client.generativeai.type.GenerateContentResponse
-import com.google.ai.client.generativeai.type.ServerException
 import com.google.firebase.vertexai.*
 import kotlinx.coroutines.*
 
