@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 @Composable
-fun RegisterScreen(onNavigateToLogin: () -> Unit, modifier: Modifier = Modifier) {
+fun RegisterScreen(onNavigateToLogin: () -> Unit, modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -70,12 +73,17 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, modifier: Modifier = Modifier)
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { /* registration logic */ }) {
+        Button(onClick = { viewModel.saveUsername(username)
+                            viewModel.savePassword(password)
+                            }) {
             Text(text = "Register")
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onNavigateToLogin) {
             Text(text = "Already have an account? Login")
         }
+
+        Text(text = viewModel.username.collectAsState().value)
+        //Text(text = viewModel.username.collectAsState().value)
     }
 }

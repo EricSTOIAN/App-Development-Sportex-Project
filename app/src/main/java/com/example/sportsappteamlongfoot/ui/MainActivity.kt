@@ -11,11 +11,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.sportsappteamlongfoot.ui.LoginScreen
 import com.example.sportsappteamlongfoot.ui.RegisterScreen
+import com.example.sportsappteamlongfoot.ui.navigation.MainMenu
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
-import com.example.sportsappteamlongfoot.data.DataStoreManager
-import com.example.sportsappteamlongfoot.data.DataStoreManager.dataStore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,19 +26,25 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SportsAppTeamLongFootTheme {
-                var isLoginScreen by remember { mutableStateOf(true) }
+                //val navController = rememberNavController()
                 val context = LocalContext.current
-                val dataStore = context.dataStore
+                val viewModel = remember { MyViewModelSimpleSaved(context) }
+                var isLoginScreen by remember { mutableStateOf(true) }
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     if (isLoginScreen) {
                         LoginScreen(
                             onNavigateToRegister = { isLoginScreen = false },
-                            modifier = Modifier.padding(innerPadding)
+                            onNavigateToMenu = {
+                                //change screen to main screen
+                            },
+                            modifier = Modifier.padding(innerPadding),
+                            viewModel = viewModel
                         )
                     } else {
                         RegisterScreen(
                             onNavigateToLogin = { isLoginScreen = true },
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier.padding(innerPadding),
+                            viewModel = viewModel
                         )
                     }
                 }
