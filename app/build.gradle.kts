@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.firebase.vertexai)
     implementation(libs.generativeai)
     implementation(libs.common)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,4 +77,5 @@ dependencies {
 
     // add the dependency for the Google AI client SDK for Android
     //implementation(libs.google.generativeai)
+    implementation(libs.androidx.datastore.preferences)
 }
