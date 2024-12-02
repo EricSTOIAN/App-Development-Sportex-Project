@@ -15,9 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 
 @Composable
-fun LoginScreen(onNavigateToRegister: () -> Unit, modifier: Modifier = Modifier) {
+fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMenu: () -> Unit={}, modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -56,7 +57,10 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, modifier: Modifier = Modifier)
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { /* login logic */ }) {
+        Button(onClick = { var canLogin = viewModel.checkLogin(username, password)
+                            if(canLogin){
+                                onNavigateToMenu() //screen change to the main menu screen
+                            }}) {
             Text(text = "Login")
         }
         Spacer(modifier = Modifier.height(8.dp))
