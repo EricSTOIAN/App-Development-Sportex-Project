@@ -13,15 +13,15 @@ activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 firebaseVertexai = "16.0.2"
 common = "0.10.0"
+navigationRuntimeKtx = "2.8.4"
+navigationCompose = "2.8.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 generativeai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "generativeai" }
 google-generativeai = { module = "com.google.generativeai:generativeai", version.ref = "generativeaiVersion" }
 
-navigationCompose = "2.8.4"
-
-[libraries]
+#navigationCompose = "2.8.4"
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesCore" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
@@ -41,8 +41,10 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 firebase-vertexai = { group = "com.google.firebase", name = "firebase-vertexai", version.ref = "firebaseVertexai" }
 common = { group = "com.google.ai.client.generativeai", name = "common", version.ref = "common" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+#androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+#androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 
 [plugins]
