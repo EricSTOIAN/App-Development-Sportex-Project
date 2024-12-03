@@ -4,6 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,7 +51,7 @@ fun AIChatBox(modifier: Modifier = Modifier){
     val focusManager = LocalFocusManager.current
 
 
-    Box(modifier = modifier.padding(top = 50.dp).verticalScroll(scrollState)){
+    Box(modifier = modifier.padding(start=20.dp,end=20.dp,top = 50.dp, bottom = 30.dp).verticalScroll(scrollState)){
         Text(
             modifier = Modifier.padding(top = 25.dp),
             text = "What can I help you with",
@@ -62,15 +65,14 @@ fun AIChatBox(modifier: Modifier = Modifier){
             shape = CircleShape,
             label = {
                 Text(text = "Type anything",
-                modifier = Modifier.align(alignment = Alignment.Center))
-                    },
+                    modifier = Modifier.align(alignment = Alignment.Center))
+            },
             modifier = Modifier
                 .padding(top = 75.dp)
                 .border(border = BorderStroke(5.dp,Color.Gray), shape = CircleShape)
                 .height(70.dp)
                 .width(500.dp)
         )
-
 
         Button(onClick = {
             aiResponseInUI = " "
@@ -96,16 +98,16 @@ fun AIChatBox(modifier: Modifier = Modifier){
             )
         }
 
+        Row(modifier = Modifier.padding(top=250.dp)){
 
-        Box(
-            modifier = Modifier.background(Color.Black)
-        ){
-            Text(
-                modifier = Modifier.padding(top = 260.dp),
-                text = aiResponseInUI,
-                fontSize = 30.sp,
-                lineHeight = 35.sp
-            )
+            Box(modifier.fillMaxHeight().background(Color.Blue)){
+                Text(
+                    text = aiResponseInUI,
+                    fontSize = 30.sp,
+                    lineHeight = 35.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }
