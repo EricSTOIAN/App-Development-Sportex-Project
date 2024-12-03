@@ -96,12 +96,17 @@ fun AIChatBox(modifier: Modifier = Modifier){
             )
         }
 
-        Text(
-            modifier = Modifier.padding(top = 260.dp),
-            text = aiResponseInUI,
-            fontSize = 30.sp,
-            lineHeight = 35.sp
-        )
+
+        Box(
+            modifier = Modifier.background(Color.Black)
+        ){
+            Text(
+                modifier = Modifier.padding(top = 260.dp),
+                text = aiResponseInUI,
+                fontSize = 30.sp,
+                lineHeight = 35.sp
+            )
+        }
     }
 }
 

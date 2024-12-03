@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -48,28 +49,31 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SportsAppTeamLongFootTheme {
+
+
+                AIChatBox(Modifier.fillMaxWidth())
                 //val navController = rememberNavController()
-                val context = LocalContext.current
-                val viewModel = remember { MyViewModelSimpleSaved(context) }
-                var isLoginScreen by remember { mutableStateOf(true) }
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    if (isLoginScreen) {
-                        LoginScreen(
-                            onNavigateToRegister = { isLoginScreen = false },
-                            onNavigateToMenu = {
-                                //change screen to main screen
-                            },
-                            modifier = Modifier.padding(innerPadding),
-                            viewModel = viewModel
-                        )
-                    } else {
-                        RegisterScreen(
-                            onNavigateToLogin = { isLoginScreen = true },
-                            modifier = Modifier.padding(innerPadding),
-                            viewModel = viewModel
-                        )
-                    }
-                }
+//                val context = LocalContext.current
+//                val viewModel = remember { MyViewModelSimpleSaved(context) }
+//                var isLoginScreen by remember { mutableStateOf(true) }
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//                    if (isLoginScreen) {
+//                        LoginScreen(
+//                            onNavigateToRegister = { isLoginScreen = false },
+//                            onNavigateToMenu = {
+//                                //change screen to main screen
+//                            },
+//                            modifier = Modifier.padding(innerPadding),
+//                            viewModel = viewModel
+//                        )
+//                    } else {
+//                        RegisterScreen(
+//                            onNavigateToLogin = { isLoginScreen = true },
+//                            modifier = Modifier.padding(innerPadding),
+//                            viewModel = viewModel
+//                        )
+//                    }
+//                }
             }
         }
     }
