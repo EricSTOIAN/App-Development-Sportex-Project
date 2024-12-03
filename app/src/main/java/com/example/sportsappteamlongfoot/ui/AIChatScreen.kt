@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Shapes
@@ -51,7 +52,9 @@ fun AIChatBox(modifier: Modifier = Modifier){
     val focusManager = LocalFocusManager.current
 
 
-    Box(modifier = modifier.padding(start=20.dp,end=20.dp,top = 50.dp, bottom = 30.dp).verticalScroll(scrollState)){
+    Box(modifier = modifier
+        .padding(start=20.dp,end=20.dp,top = 50.dp, bottom = 30.dp)
+        .verticalScroll(scrollState)){
         Text(
             modifier = Modifier.padding(top = 25.dp),
             text = "What can I help you with",
@@ -62,14 +65,13 @@ fun AIChatBox(modifier: Modifier = Modifier){
             value = userInput,
             onValueChange = { userInput = it},
             textStyle = TextStyle(textAlign = TextAlign.Center),
-            shape = CircleShape,
             label = {
                 Text(text = "Type anything",
                     modifier = Modifier.align(alignment = Alignment.Center))
             },
             modifier = Modifier
-                .padding(top = 75.dp)
-                .border(border = BorderStroke(5.dp,Color.Gray), shape = CircleShape)
+                .padding(top = 80.dp)
+                .border(border = BorderStroke(5.dp,Color.Gray), shape = RoundedCornerShape(30.dp))
                 .height(70.dp)
                 .width(500.dp)
         )
@@ -90,7 +92,7 @@ fun AIChatBox(modifier: Modifier = Modifier){
                 btnIsEnabled = true
             }
         },
-            modifier= Modifier.padding(start = 150.dp, top = 150.dp),
+            modifier= Modifier.padding(start = 150.dp, top = 160.dp),
             enabled = btnIsEnabled
         ) {
             Text(
@@ -98,14 +100,25 @@ fun AIChatBox(modifier: Modifier = Modifier){
             )
         }
 
-        Row(modifier = Modifier.padding(top=250.dp)){
 
-            Box(modifier.fillMaxHeight().background(Color.Blue)){
+
+
+        Row(modifier = Modifier
+            .padding(top=250.dp)
+            ){
+
+            Box(modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .border(border = BorderStroke(8.dp,Color.Blue), shape = RoundedCornerShape(16.dp))
+                .background(Color.Gray, shape = RoundedCornerShape(16.dp))
+                ){
                 Text(
                     text = aiResponseInUI,
                     fontSize = 30.sp,
                     lineHeight = 35.sp,
-                    color = Color.White
+                    color = Color.Black,
+                    modifier = Modifier.padding(25.dp)
                 )
             }
         }
