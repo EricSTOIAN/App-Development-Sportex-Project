@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
             SportsAppTeamLongFootTheme {
 
 
-                AIChatBox(Modifier.fillMaxWidth())
+                AIChatBox(Modifier.fillMaxSize())
                 //val navController = rememberNavController()
 //                val context = LocalContext.current
 //                val viewModel = remember { MyViewModelSimpleSaved(context) }

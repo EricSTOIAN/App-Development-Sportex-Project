@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui
 
+import android.content.res.Resources
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,6 +45,8 @@ import com.example.sportsappteamlongfoot.R
 import com.example.sportsappteamlongfoot.model.AIModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.example.sportsappteamlongfoot.ui.*
+
 
 
 
@@ -58,58 +62,57 @@ fun AIChatBox(modifier: Modifier = Modifier){
 
 
     Box(modifier = modifier
-        .padding(start = 20.dp, end = 20.dp, top = 50.dp, bottom = 30.dp)
-        .verticalScroll(scrollState)){
-        Text(
-            modifier = Modifier.padding(top = 25.dp),
-            text = "What can I help you with",
-            fontSize = 30.sp
-        )
+        .verticalScroll(scrollState)
+        .background(Color.Blue)
+    ){
 
-        TextField(
-            value = userInput,
-            onValueChange = { userInput = it},
-            textStyle = TextStyle(textAlign = TextAlign.Center),
-            label = {
-                Text(text = "Type anything",
-                    modifier = Modifier.align(alignment = Alignment.Center))
-            },
-            shape = RoundedCornerShape(50.dp),
-            modifier = Modifier
-                .padding(top = 80.dp)
-                .border(border = BorderStroke(5.dp, Color.Gray), shape = RoundedCornerShape(50.dp))
-                .height(70.dp)
-                .width(500.dp)
-       )
-
-
-
-
-        Button(onClick = {
-            aiResponseInUI = " "
-            btnIsEnabled = false
-            focusManager.clearFocus() //Hides the keyboard
-            coroutineScope.launch{
-                val response = aiModel.GenerateAIResponse(userInput).toString()
-
-                //Gives typing effect
-                for(i in response.indices){
-                    aiResponseInUI = response.substring(0, i + 1)
-                    delay(20) // Delay to simulate typing
-                }
-
-                btnIsEnabled = true
-            }
-        },
-            modifier= Modifier.padding(start = 150.dp, top = 160.dp),
-            enabled = btnIsEnabled
-        ) {
+        Box(modifier = modifier
+            .padding(start = 20.dp, top = 20.dp,end = 20.dp)){
             Text(
-                text = if (!btnIsEnabled) "Typing..." else "Generate"
+                modifier = Modifier.padding(top = 25.dp),
+                text = "What can I help you with",
+                fontSize = 30.sp
             )
+            TextField(
+                value = userInput,
+                onValueChange = { userInput = it},
+                textStyle = TextStyle(textAlign = TextAlign.Center),
+                label = {
+                    Text(text = "Type anything",
+                        modifier = Modifier.align(alignment = Alignment.Center))
+                },
+                shape = RoundedCornerShape(50.dp),
+                modifier = Modifier
+                    .padding(top = 80.dp)
+                    .border(border = BorderStroke(5.dp, Color.Gray), shape = RoundedCornerShape(50.dp))
+                    .height(70.dp)
+                    .width(500.dp)
+            )
+
+            Button(onClick = {
+                aiResponseInUI = " "
+                btnIsEnabled = false
+                focusManager.clearFocus() //Hides the keyboard
+                coroutineScope.launch{
+                    val response = aiModel.GenerateAIResponse(userInput).toString()
+
+                    //Gives typing effect
+                    for(i in response.indices){
+                        aiResponseInUI = response.substring(0, i + 1)
+                        delay(20) // Delay to simulate typing
+                    }
+
+                    btnIsEnabled = true
+                }
+            },
+                modifier= Modifier.padding(start = 150.dp, top = 160.dp),
+                enabled = btnIsEnabled
+            ) {
+                Text(
+                    text = if (!btnIsEnabled) "Typing..." else "Generate"
+                )
+            }
         }
-
-
 
         Row(modifier = Modifier
             .padding(top=250.dp)
@@ -118,9 +121,10 @@ fun AIChatBox(modifier: Modifier = Modifier){
 
             Image(painter = painterResource(R.drawable.google_gemini_icon),
                 contentDescription = "Gemini",
-                modifier = Modifier.size(45.dp)
+                modifier = Modifier
+                    .size(45.dp)
+                    .padding(end = 5.dp)
             )
-
 
             Box(
                 modifier

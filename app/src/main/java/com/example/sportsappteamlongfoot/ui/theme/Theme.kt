@@ -35,6 +35,14 @@ private val LightColorScheme = lightColorScheme(
 //    onSurface = Color.Black
 )
 
+private val AIColorScheme = lightColorScheme(
+    primary = Color(0xFF390099),
+    secondary = Color(0xFF9E0059),
+    tertiary = Color(0xFFFF0054),
+    background = Color(0xFFFF5400),
+    surface = Color(0xFFFFBD00)
+)
+
 @Composable
 fun SportsAppTeamLongFootTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -58,3 +66,5 @@ fun SportsAppTeamLongFootTheme(
         content = content
     )
 }
+
+
