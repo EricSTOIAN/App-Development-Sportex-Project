@@ -1,6 +1,7 @@
 package com.example.sportsappteamlongfoot.model
 
 import android.content.Context
+import android.icu.text.DateFormat
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -15,9 +16,12 @@ private val Context.dataStore by preferencesDataStore(name = WORKOUT_DATASTORE)
 class RepositoryWorkout(private val context: Context){
     //The set of information that will be stored in the DataStore
     //are indicated using "preferencesKeys
+
     companion object {
+        val NAME = stringPreferencesKey("NAME")
+        val TYPE = stringPreferencesKey("TYPE")
+        val DATE = stringPreferencesKey("DATE")
         val DESCRIPTION = stringPreferencesKey("DESCRIPTION")
-        val WORKOUT = stringPreferencesKey("WORKOUT")
     }
 
     /**
@@ -25,8 +29,10 @@ class RepositoryWorkout(private val context: Context){
      */
     suspend fun saveWorkout (workout: Workout) {
         context.dataStore.edit {
+            it[NAME] = workout.name
+            it[TYPE] = workout.type
+            it[DATE] = workout.date
             it[DESCRIPTION] = workout.description
-            it[WORKOUT] = workout.workout
         }
     }
 
@@ -35,12 +41,14 @@ class RepositoryWorkout(private val context: Context){
      */
     fun getWorkouts(): Flow<Workout> = context.dataStore.data.map {
         Workout(
-            description = it[DESCRIPTION] ?: "",
-            workout = it[WORKOUT] ?: ""
+            name = it[NAME] ?: "",
+            type = it[TYPE] ?: "",
+            date = it[DATE] ?: "",
+            description = it[DESCRIPTION] ?: ""
         )
     }
 
 }
 
-class Workout(val description: String, val workout: String)
+class Workout(val name:String, val type: String, val date: String, val description:String)
 
