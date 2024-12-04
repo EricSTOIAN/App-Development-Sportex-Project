@@ -23,8 +23,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val context = LocalContext.current
+            val viewModel = remember { MyViewModelSimpleSaved(context) }
             val navController = rememberNavController() // Create NavController
-            AppNavHost(navController = navController, modifier = Modifier) // Pass NavController to AppNavHost
+            AppNavHost(navController = navController, modifier = Modifier, viewModel = viewModel) // Pass NavController to AppNavHost
         }
     }
 }
