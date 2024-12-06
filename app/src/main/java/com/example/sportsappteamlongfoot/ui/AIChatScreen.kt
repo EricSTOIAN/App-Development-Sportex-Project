@@ -50,7 +50,7 @@ import com.example.sportsappteamlongfoot.ui.*
 
 
 
-private var workoutDatastoreInstance: Workout = TODO();
+private var workoutDatastoreInstance: Workout = Workout("","","","");
 
 @Composable
 fun AIChatBox(modifier: Modifier = Modifier){
@@ -96,16 +96,7 @@ fun AIChatBox(modifier: Modifier = Modifier){
                 btnIsEnabled = false
                 focusManager.clearFocus() //Hides the keyboard
                 coroutineScope.launch{
-                    if (userInput.contains("workout")){
-                        val response = aiModel.GenerateAIResponse(userInput+
-                        "Current Goal: ${workoutDatastoreInstance.name}").toString()
-                    }
-
-
                     val response = aiModel.GenerateAIResponse(userInput).toString()
-
-
-
 
                     //Gives typing effect
                     for(i in response.indices){
@@ -167,5 +158,5 @@ fun AIChatBoxPreview(){
 }
 
 fun setWorkoutInstance(workout: Workout){
-    workoutDatastoreInstance = workout
+      workoutDatastoreInstance = workout
 }
