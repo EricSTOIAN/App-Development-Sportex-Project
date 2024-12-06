@@ -43,12 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sportsappteamlongfoot.R
 import com.example.sportsappteamlongfoot.model.AIModel
+import com.example.sportsappteamlongfoot.model.Workout
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.example.sportsappteamlongfoot.ui.*
 
 
 
+private var workoutDatastoreInstance: Workout = TODO();
 
 @Composable
 fun AIChatBox(modifier: Modifier = Modifier){
@@ -94,7 +96,16 @@ fun AIChatBox(modifier: Modifier = Modifier){
                 btnIsEnabled = false
                 focusManager.clearFocus() //Hides the keyboard
                 coroutineScope.launch{
+                    if (userInput.contains("workout")){
+                        val response = aiModel.GenerateAIResponse(userInput+
+                        "Current Goal: ${workoutDatastoreInstance.name}").toString()
+                    }
+
+
                     val response = aiModel.GenerateAIResponse(userInput).toString()
+
+
+
 
                     //Gives typing effect
                     for(i in response.indices){
@@ -114,27 +125,25 @@ fun AIChatBox(modifier: Modifier = Modifier){
             }
         }
 
-        Row(modifier = Modifier
-            .padding(top=250.dp)
-            )
+        Box(modifier = Modifier
+            .padding(top=250.dp))
         {
 
             Image(painter = painterResource(R.drawable.google_gemini_icon),
                 contentDescription = "Gemini",
                 modifier = Modifier
                     .size(45.dp)
-                    .padding(end = 5.dp)
             )
 
             Box(
                 modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
+                    .padding(start = 50.dp, end = 20.dp)
                     .border(
                         border = BorderStroke(8.dp, Color.Gray),
                         shape = RoundedCornerShape(16.dp)
                     )
                     .background(Color.LightGray, shape = RoundedCornerShape(16.dp))
+
                 ){
                 Text(
                     text = aiResponseInUI,
@@ -155,4 +164,8 @@ fun AIChatBox(modifier: Modifier = Modifier){
 @Composable
 fun AIChatBoxPreview(){
     AIChatBox(Modifier.fillMaxWidth())
+}
+
+fun setWorkoutInstance(workout: Workout){
+    workoutDatastoreInstance = workout
 }

@@ -49,13 +49,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SportsAppTeamLongFootTheme {
-
-
                 AIChatBox(Modifier.fillMaxSize())
-                //val navController = rememberNavController()
-//                val context = LocalContext.current
-//                val viewModel = remember { MyViewModelSimpleSaved(context) }
-//                var isLoginScreen by remember { mutableStateOf(true) }
+                val navController = rememberNavController()
+                    val context = LocalContext.current
+                    val viewModel = remember { MyViewModelSimpleSaved(context) }
+                var isLoginScreen by remember { mutableStateOf(true) }
+
+
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 //                    if (isLoginScreen) {
 //                        LoginScreen(
