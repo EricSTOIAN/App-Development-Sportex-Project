@@ -81,28 +81,37 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     }
 
     private fun prepopulateTestWorkouts() {
-        val initialWorkouts = listOf(
-            Workout(name="workout1", description = "test 1",date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
-
-            Workout(name="workout2", description = "test 2",date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true),
-            Workout(name="workout3", description = "test 3",date = LocalDate.now().    minusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true),
-            Workout(name="workout4", description = "test 4",date = LocalDate.now().    plusDays(10).toString(), type = "testing", burntCalories = 250, isCompleted = false)
-
-        )
-        _workouts.value = initialWorkouts
-        saveWorkouts(initialWorkouts)
+        viewModelScope.launch {
+            val existingWorkouts = dataStoreManager.workoutsFlow.firstOrNull()
+            if (existingWorkouts.isNullOrEmpty()) {
+                val initialWorkouts = listOf(
+                    Workout(name = "workout1", description = "test 1", date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
+                    Workout(name = "workout2", description = "test 2", date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
+                )
+                _workouts.value = initialWorkouts
+                saveWorkouts(initialWorkouts)
+            } else {
+                println("Existing workouts detected, skipping prepopulation.")
+            }
+        }
     }
 
     private fun prepopulateTestGoals() {
-        val initialGoals = listOf(
-            Goal(name="goal1", description = "test 1",date = LocalDate.now().toString()),
-            Goal(name="goal2", description = "test 2",date = LocalDate.now().plusDays(2).toString())
-
-
-        )
-        _goals.value = initialGoals
-        saveGoals(initialGoals)
+        viewModelScope.launch {
+            val existingGoals = dataStoreManager.goalsFlow.firstOrNull()
+            if (existingGoals.isNullOrEmpty()) {
+                val initialGoals = listOf(
+                    Goal(name = "goal1", description = "test 1", date = LocalDate.now().toString()),
+                    Goal(name = "goal2", description = "test 2", date = LocalDate.now().plusDays(2).toString())
+                )
+                _goals.value = initialGoals
+                saveGoals(initialGoals)
+            } else {
+                println("Existing goals detected, skipping prepopulation.")
+            }
+        }
     }
+
 
     fun saveFirstName(firstName: String) {
         _firstName.value = firstName
@@ -166,6 +175,23 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
                 _weight.value = weight
             }
         }
+        viewModelScope.launch {
+            dataStoreManager.workoutsFlow.collect { savedWorkouts ->
+                if (savedWorkouts.isNotEmpty()) {
+                    _workouts.value = savedWorkouts
+                    println("Loaded workouts: $savedWorkouts")
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            dataStoreManager.goalsFlow.collect { savedGoals ->
+                if (savedGoals.isNotEmpty()) {
+                    _goals.value = savedGoals
+                    println("Loaded goals: $savedGoals")
+                }
+            }
+        }
     }
 
     /* saves the email */
@@ -191,30 +217,36 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     }
 
 
-    fun saveGoals(goals: List<Goal>) {
+    private fun saveGoals(goals: List<Goal>) {
         viewModelScope.launch {
             dataStoreManager.saveGoals(goals)
         }
     }
 
-    fun saveWorkouts(workouts: List<Workout>) {
+    private fun saveWorkouts(workouts: List<Workout>) {
         viewModelScope.launch {
             dataStoreManager.saveWorkouts(workouts)
+        }
+    }
+
+    fun addWorkout(workout: Workout) {
+        val updatedWorkouts = _workouts.value.toMutableList().apply { add(workout) }
+        _workouts.value = updatedWorkouts
+        viewModelScope.launch {
+            dataStoreManager.saveWorkouts(updatedWorkouts)
+            println("Workout saved: $updatedWorkouts")
         }
     }
 
     fun addGoal(goal: Goal) {
         val updatedGoals = _goals.value.toMutableList().apply { add(goal) }
         _goals.value = updatedGoals
-        saveGoals(updatedGoals)
+        viewModelScope.launch {
+            dataStoreManager.saveGoals(updatedGoals)
+            println("Goal saved: $updatedGoals")
+        }
     }
 
-    fun addWorkout(workout: Workout) {
-        println("Adding workout: $workout")
-        val updatedWorkouts = _workouts.value.toMutableList().apply { add(workout) }
-        _workouts.value = updatedWorkouts
-        saveWorkouts(updatedWorkouts)
-    }
 
     fun getWorkoutForToday(): Workout? {
        val today = LocalDate.now().toString() // Ensure this matches Workout.date

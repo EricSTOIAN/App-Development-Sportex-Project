@@ -71,18 +71,17 @@ class DataStoreManager (private val context: Context) {
         }
     }
 
-    // Save goals as JSON string
     suspend fun saveGoals(goals: List<Goal>) {
         val json = Gson().toJson(goals)
+        println("Saving goals to DataStore: $json") // Debug log
         context.dataStore.edit { preferences ->
             preferences[GOALS] = json
         }
     }
 
-    // Save workouts as JSON string
     suspend fun saveWorkouts(workouts: List<Workout>) {
         val json = Gson().toJson(workouts)
-        println("Saving workouts to DataStore: $json")
+        println("Saving workouts to DataStore: $json") // Debug log
         context.dataStore.edit { preferences ->
             preferences[WORKOUTS] = json
         }
