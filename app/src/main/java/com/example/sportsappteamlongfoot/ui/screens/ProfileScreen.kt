@@ -17,14 +17,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.sportsappteamlongfoot.ui.BottomBar
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
 @Composable
-fun ProfileScreen(
-    viewModel: MyViewModelSimpleSaved,
-    onNavigateToWorkout: () -> Unit,
-    onNavigateToGoal: () -> Unit
-) {
+fun ProfileScreen(navController: NavController,
+                  viewModel: MyViewModelSimpleSaved,
+                  onNavigateToWorkout: () -> Unit,
+                  onNavigateToGoal: () -> Unit) {
     val firstName by viewModel.firstName.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val age by viewModel.age.collectAsState()
@@ -39,141 +40,150 @@ fun ProfileScreen(
     var newHeight by remember { mutableStateOf(height) }
     var newGoals by remember { mutableStateOf(List(6) { "Goal ${it + 1}" }) }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(16.dp) // Padding around the content
     ) {
-        // Header Section
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
         ) {
-            Text(
-                text = "Profile",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Profile Icon",
-                tint = Color.Gray,
+            // Header Section
+            Row(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
-        }
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Profile",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile Icon",
+                    tint = Color.Gray,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
+            }
 
-        // Information Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(4.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            // Information Card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (isEditing) {
+                        OutlinedTextField(
+                            value = newFirstName,
+                            onValueChange = { newFirstName = it },
+                            label = { Text("First Name") }
+                        )
+                        OutlinedTextField(
+                            value = newLastName,
+                            onValueChange = { newLastName = it },
+                            label = { Text("Last Name") }
+                        )
+                        OutlinedTextField(
+                            value = newAge,
+                            onValueChange = { newAge = it },
+                            label = { Text("Age") },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                        )
+                        OutlinedTextField(
+                            value = newWeight,
+                            onValueChange = { newWeight = it },
+                            label = { Text("Weight") }
+                        )
+                        OutlinedTextField(
+                            value = newHeight,
+                            onValueChange = { newHeight = it },
+                            label = { Text("Height") }
+                        )
+                    } else {
+                        ProfileRow(label = "Name", value = "$firstName $lastName")
+                        ProfileRow(label = "Age", value = age)
+                        ProfileRow(label = "Weight", value = weight)
+                        ProfileRow(label = "Height", value = height)
+                    }
+                }
+            }
+
+            // Achievements Section
+            Text(
+                text = "Stats/Achievements",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            GridSection(newGoals, isEditing) { index, updatedGoal ->
+                newGoals = newGoals.toMutableList().apply { this[index] = updatedGoal }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Edit and Save Buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (isEditing) {
-                    OutlinedTextField(
-                        value = newFirstName,
-                        onValueChange = { newFirstName = it },
-                        label = { Text("First Name") }
-                    )
-                    OutlinedTextField(
-                        value = newLastName,
-                        onValueChange = { newLastName = it },
-                        label = { Text("Last Name") }
-                    )
-                    OutlinedTextField(
-                        value = newAge,
-                        onValueChange = { newAge = it },
-                        label = { Text("Age") },
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-                    )
-                    OutlinedTextField(
-                        value = newWeight,
-                        onValueChange = { newWeight = it },
-                        label = { Text("Weight") }
-                    )
-                    OutlinedTextField(
-                        value = newHeight,
-                        onValueChange = { newHeight = it },
-                        label = { Text("Height") }
-                    )
+                    Button(onClick = {
+                        viewModel.saveFirstName(newFirstName)
+                        viewModel.saveLastName(newLastName)
+                        viewModel.saveAge(newAge)
+                        viewModel.saveWeight(newWeight)
+                        viewModel.saveHeight(newHeight)
+                        // Save goals logic if required
+                        isEditing = false
+                    }) {
+                        Text("Save")
+                    }
                 } else {
-                    ProfileRow(label = "Name", value = "$firstName $lastName")
-                    ProfileRow(label = "Age", value = age)
-                    ProfileRow(label = "Weight", value = weight)
-                    ProfileRow(label = "Height", value = height)
+                    Button(onClick = { isEditing = true }) {
+                        Text("Edit")
+                    }
                 }
             }
-        }
-
-        // Achievements Section
-        Text(
-            text = "Stats/Achievements",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        GridSection(newGoals, isEditing) { index, updatedGoal ->
-            newGoals = newGoals.toMutableList().apply { this[index] = updatedGoal }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Edit and Save Buttons
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            if (isEditing) {
-                Button(onClick = {
-                    viewModel.saveFirstName(newFirstName)
-                    viewModel.saveLastName(newLastName)
-                    viewModel.saveAge(newAge)
-                    viewModel.saveWeight(newWeight)
-                    viewModel.saveHeight(newHeight)
-                    // Save goals logic if required
-                    isEditing = false
-                }) {
-                    Text("Save")
-                }
-            } else {
-                Button(onClick = { isEditing = true }) {
-                    Text("Edit")
-                }
+            // Buttons to Navigate
+            Button(
+                onClick = onNavigateToWorkout,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text("Go to Workout Screen")
             }
-        }
-        // Buttons to Navigate
-        Button(
-            onClick = onNavigateToWorkout,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Text("Go to Workout Screen")
+
+            Button(
+                onClick = onNavigateToGoal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text("Go to Goal Screen")
+            }
+
         }
 
-        Button(
-            onClick = onNavigateToGoal,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Text("Go to Goal Screen")
-        }
-
-        // Bottom Navigation Bar
-        BottomNavigationBar()
+        // Bottom Bar positioned at the bottom
+        BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
+
 }
 
 @Composable
@@ -238,35 +248,3 @@ fun AchievementCard(title: String) {
 }
 
 
-@Composable
-fun BottomNavigationBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .background(Color.LightGray, RoundedCornerShape(8.dp)),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Default.AccountCircle, // Replace with actual icons
-            contentDescription = "Home",
-            modifier = Modifier.size(24.dp)
-        )
-        Icon(
-            imageVector = Icons.Default.AccountCircle, // Replace with Calendar icon
-            contentDescription = "Calendar",
-            modifier = Modifier.size(24.dp)
-        )
-        Icon(
-            imageVector = Icons.Default.AccountCircle, // Replace with Star icon
-            contentDescription = "Achievements",
-            modifier = Modifier.size(24.dp)
-        )
-        Icon(
-            imageVector = Icons.Default.AccountCircle, // Replace with Profile icon
-            contentDescription = "Profile",
-            modifier = Modifier.size(24.dp)
-        )
-    }
-}

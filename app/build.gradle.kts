@@ -82,5 +82,4 @@ dependencies {
     //implementation(libs.google.generativeai)
     implementation(libs.androidx.datastore.preferences)
 
-
 }

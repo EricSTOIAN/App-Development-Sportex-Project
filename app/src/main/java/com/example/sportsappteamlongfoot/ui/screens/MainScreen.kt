@@ -25,9 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.navigation.NavController
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier,  onProfileClick: () -> Unit ) {
+fun MainScreen(modifier: Modifier = Modifier, onProfileClick: () -> Unit, navController: NavController ) {
     Column(
         modifier = modifier
             .fillMaxSize()

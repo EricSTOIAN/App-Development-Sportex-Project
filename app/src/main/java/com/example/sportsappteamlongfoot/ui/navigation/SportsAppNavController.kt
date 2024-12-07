@@ -6,6 +6,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,11 +38,12 @@ fun AppNavHost(
             modifier = modifier
         ) {
             composable(route = MainMenu.route) {
-                MainMenu.screen(
+                MainScreen(
+                    navController = navController,  // Pass navController here
                     onProfileClick = {
                         navController.navigate(Profile.route)
                     }
-                )()
+                )
             }
             composable(route = Register.route) {
                 RegisterScreen(
@@ -65,16 +67,17 @@ fun AppNavHost(
             }
             composable(route = Profile.route) {
                 ProfileScreen(
+                    navController = navController,
                     viewModel = viewModel,
                     onNavigateToWorkout = { navController.navigate("workout_screen") },
                     onNavigateToGoal = { navController.navigate("goal_screen") }
                 )
             }
             composable(route = "workout_screen") {
-                WorkoutScreen()
+                WorkoutScreen(navController = navController)
             }
             composable(route = "goal_screen") {
-                GoalScreen()
+                GoalScreen( navController = navController)
             }
         }
     }
