@@ -54,7 +54,6 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         viewModelScope.launch {
             dataStoreManager.firstNameFlow.collect { _firstName.value = it }
             dataStoreManager.lastNameFlow.collect { _lastName.value = it }
-            dataStoreManager.ageFlow.collect { _age.value = it }
             dataStoreManager.goalsFlow.collect { _goals.value = it }
             dataStoreManager.workoutsFlow.collect { _workouts.value = it }
 
@@ -108,6 +107,11 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         viewModelScope.launch {
             dataStoreManager.passwordFlow.collect { password ->
                 _password.value = password
+            }
+        }
+        viewModelScope.launch {
+            dataStoreManager.ageFlow.collect { age ->
+                _age.value = age
             }
         }
         viewModelScope.launch {

@@ -1,5 +1,7 @@
 package com.example.sportsappteamlongfoot.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -21,11 +23,13 @@ import androidx.navigation.NavController
 import com.example.sportsappteamlongfoot.ui.BottomBar
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfileScreen(navController: NavController,
                   viewModel: MyViewModelSimpleSaved,
                   onNavigateToWorkout: () -> Unit,
-                  onNavigateToGoal: () -> Unit) {
+                  onNavigateToGoal: () -> Unit)
+{
     val firstName by viewModel.firstName.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val age by viewModel.age.collectAsState()
@@ -104,7 +108,6 @@ fun ProfileScreen(navController: NavController,
                             value = newAge,
                             onValueChange = { newAge = it },
                             label = { Text("Age") },
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                         )
                         OutlinedTextField(
                             value = newWeight,
