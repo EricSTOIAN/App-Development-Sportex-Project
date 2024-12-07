@@ -1,6 +1,8 @@
 package com.example.sportsappteamlongfoot.ui.screens
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,12 +39,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GoalScreen(navController: NavController) {
+fun GoalScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) {
     var name by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -50,6 +54,7 @@ fun GoalScreen(navController: NavController) {
 
     var isSnackbarVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,17 +107,6 @@ fun GoalScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Ask AI Button
-        Button(
-            onClick = {
-                description = "AI-generated suggestion for your goal" // Simulate AI response
-            },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text(text = "Ask AI")
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-
         // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -122,6 +116,8 @@ fun GoalScreen(navController: NavController) {
                 Text(text = "Cancel")
             }
             Button(onClick = {
+                val goal = "$name - $description - $date"
+                viewModel.addGoal(goal) // Save goal to DataStore
                 isSnackbarVisible = true
             }) {
                 Text(text = "Add")
