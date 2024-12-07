@@ -21,7 +21,28 @@ class DataStoreManager (private val context: Context){
         val HEIGHT = stringPreferencesKey("HEIGHT")
         val WEIGHT = stringPreferencesKey("WEIGHT")
         val GOAL = stringPreferencesKey("GOAL")
+        val FIRST_NAME = stringPreferencesKey("FIRST_NAME")
+        val LAST_NAME = stringPreferencesKey("LAST_NAME")
+        val AGE = intPreferencesKey("AGE")
     }
+
+    suspend fun saveFirstName(firstName: String) {
+        context.dataStore.edit { preferences ->
+            preferences[FIRST_NAME] = firstName
+        }
+    }
+
+    suspend fun saveLastName(lastName: String) {
+        context.dataStore.edit { preferences ->
+            preferences[LAST_NAME] = lastName
+        }
+    }
+    suspend fun saveAge(age: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[AGE] = age
+        }
+    }
+
 
     suspend fun savePassword(password: String) {
         context.dataStore.edit { preferences ->
@@ -53,6 +74,19 @@ class DataStoreManager (private val context: Context){
         }
     }
 
+    val firstNameFlow: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[FIRST_NAME] ?: ""
+        }
+
+    val lastNameFlow: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[LAST_NAME] ?: ""
+        }
+    val ageFlow: Flow<Int> = context.dataStore.data
+        .map { preferences ->
+            preferences[AGE] ?: 0
+        }
     val passwordFlow: Flow<String> = context.dataStore.data
         .map { preferences ->
             preferences[PASSWORD] ?: ""
