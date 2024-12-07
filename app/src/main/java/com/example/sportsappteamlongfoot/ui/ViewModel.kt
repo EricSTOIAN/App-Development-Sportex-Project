@@ -82,8 +82,9 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     private fun prepopulateTestWorkouts() {
         val initialWorkouts = listOf(
             Workout(name="workout1", description = "test 1",date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
-            Workout(name="workout2", description = "test 2",date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
-                   , Workout(name="workout3", description = "test 4",date = LocalDate.now().    minusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
+            Workout(name="workout2", description = "test 2",date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true),
+            Workout(name="workout3", description = "test 3",date = LocalDate.now().    minusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true),
+            Workout(name="workout4", description = "test 4",date = LocalDate.now().    plusDays(10).toString(), type = "testing", burntCalories = 250, isCompleted = false)
 
         )
         _workouts.value = initialWorkouts
@@ -248,6 +249,10 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         println("weekly"+weeklyWorkouts)
         return weeklyWorkouts
     }
-
+    fun getUpcomingWorkouts(): List<Workout> {
+        return _workouts.value
+            .filter { LocalDate.parse(it.date).isAfter(LocalDate.now().minusDays(1)) }
+            .sortedBy { LocalDate.parse(it.date) }
+    }
 
 }

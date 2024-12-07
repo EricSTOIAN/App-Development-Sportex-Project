@@ -48,7 +48,7 @@ import androidx.compose.foundation.layout.*
 fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved, navController: NavController) {
     // Observe the state of workouts from the ViewModel
     val workouts = viewModel.getWeeklyWorkouts()
-
+    val upcomingWorkouts = viewModel.getUpcomingWorkouts()
     // Calculate the start of the current week
     val weekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
 
@@ -60,30 +60,39 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
         weeklyWorkouts.add(Pair(dayOfWeek, dayWorkouts))
     }
 
-    Box(modifier = Modifier.padding(16.dp)) {
+
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 70.dp) // Reserve space for BottomBar
         ) {
-            // Display the starting date of the week at the top
+            // Title
             Text(
                 text = "Planner",
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp)) // Add spacing between titles
+            Spacer(modifier = Modifier.height(50.dp))
 
+            // Display Week Start
             Text(
                 text = "Week of ${weekStart.month} ${weekStart.dayOfMonth}",
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
+            // Weekly Workouts Carousel
             LazyRow(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 items(weeklyWorkouts) { (dayOfWeek, dayWorkouts) ->
-                    // Display the day of the week above the card
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -97,17 +106,14 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
 
-                        // Display the workouts inside cards, change background color based on the presence of workouts
                         Card(
                             modifier = Modifier
-                                //.background(if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray)
                                 .fillMaxWidth()
-                                .height(120.dp), // Adjust height as necessary
+                                .height(80.dp),
                             shape = RoundedCornerShape(8.dp),
-                                    colors = CardDefaults.cardColors(
-                                    containerColor = if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray
-                                    )
-
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray
+                            )
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,15 +139,67 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
                         }
                     }
 
-                    Spacer(modifier = Modifier.width(16.dp)) // Add spacing between days
+                    Spacer(modifier = Modifier.width(16.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Upcoming Workouts Title
+            Text(
+                text = "Upcoming Workouts",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            // Upcoming Workouts Carousel
+            LazyRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(upcomingWorkouts) { workout ->
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .size(width = 200.dp, height = 100.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = workout.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Date: ${workout.date}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        // Bottom bar added here
-        BottomBar(navController = navController, Modifier.align(Alignment.BottomEnd))
+        // Bottom Bar
+        BottomBar(
+            navController = navController,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        )
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
