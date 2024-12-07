@@ -17,79 +17,89 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.sportsappteamlongfoot.ui.BottomBar
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
 @Composable
-fun ProfileScreen(viewModel: MyViewModelSimpleSaved) {
+fun ProfileScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) {
     val firstName by viewModel.firstName.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val age by viewModel.age.collectAsState()
     val weight by viewModel.weight.collectAsState()
     val height by viewModel.height.collectAsState()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(16.dp) // Padding around the content
     ) {
-        // Header Section
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(bottom = 70.dp) // Ensure bottom bar is not overlapped
         ) {
-            Text(
-                text = "Profile",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Profile Icon",
-                tint = Color.Gray,
+            // Header Section
+            Row(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
-        }
-
-        // Information Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(4.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                ProfileRow(label = "Name", value = "$firstName $lastName")
-                ProfileRow(label = "Age", value = age)
-                ProfileRow(label = "Weight", value = weight)
-                ProfileRow(label = "Height", value = height)
+                Text(
+                    text = "Profile",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile Icon",
+                    tint = Color.Gray,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
             }
+
+            // Information Card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ProfileRow(label = "Name", value = "$firstName $lastName")
+                    ProfileRow(label = "Age", value = age)
+                    ProfileRow(label = "Weight", value = weight)
+                    ProfileRow(label = "Height", value = height)
+                }
+            }
+
+            // Achievements Section
+            Text(
+                text = "Stats/Achievements",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            GridSection()
+
+            Spacer(modifier = Modifier.weight(1f))
+
         }
 
-        // Achievements Section
-        Text(
-            text = "Stats/Achievements",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        GridSection()
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Bottom Navigation Bar
-        BottomNavigationBar()
+        // Bottom Bar positioned at the bottom
+        BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
+
 
 @Composable
 fun ProfileRow(label: String, value: String) {

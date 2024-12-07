@@ -35,11 +35,12 @@ fun AppNavHost(
             modifier = modifier
         ) {
             composable(route = MainMenu.route) {
-                MainMenu.screen(
+                MainScreen(
+                    navController = navController,  // Pass navController here
                     onProfileClick = {
                         navController.navigate(Profile.route)
                     }
-                )()
+                )
             }
             composable(route = Register.route) {
                 RegisterScreen(
@@ -62,7 +63,7 @@ fun AppNavHost(
                 )
             }
             composable(route = Profile.route) {
-                ProfileScreen(viewModel = viewModel)
+                ProfileScreen(navController = navController,viewModel = viewModel)
             }
         }
     }

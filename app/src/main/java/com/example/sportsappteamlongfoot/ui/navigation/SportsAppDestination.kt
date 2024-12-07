@@ -17,7 +17,11 @@ object MainMenu : AppDestination {
         get() = TODO("Not yet implemented")
 
     fun screen(onProfileClick: () -> Unit): @Composable () -> Unit = {
-        MainScreen(onProfileClick = onProfileClick)
+        MainScreen(
+            onProfileClick = onProfileClick,
+            navController = TODO(),
+            modifier = TODO()
+        )
     }
 }
 
