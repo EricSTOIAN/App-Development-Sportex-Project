@@ -39,6 +39,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.sportsappteamlongfoot.data.Goal
+import com.example.sportsappteamlongfoot.data.Workout
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -116,7 +118,14 @@ fun GoalScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) 
                 Text(text = "Cancel")
             }
             Button(onClick = {
-                val goal = "$name - $description - $date"
+                //val goal = "$name - $description - $date"
+                val goal = Goal(
+                    name = name,
+                    type = "",
+                    endDate = date,
+                    description = description
+                )
+
                 viewModel.addGoal(goal) // Save goal to DataStore
                 isSnackbarVisible = true
             }) {

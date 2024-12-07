@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +29,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.sportsappteamlongfoot.data.Goal
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 
 
 //For debugging purposes
@@ -37,12 +40,15 @@ private val goals: List<Goal> = listOf(
     Goal("Do 60 Push-Ups","Exercises","June 7 2027","To be stronger")
 )
 
+
+
+@SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
 fun GoalDetailsScreen(navController: NavController, viewModel: MyViewModelSimpleSaved){
     val scrollStateBox = rememberScrollState()
     val scrollStateLazyColumnsActiveGoals = rememberScrollState()
     val scrollStateLazyColumnsUpcomingGoals = rememberScrollState()
-
+    val goals2: List<Goal> = viewModel.goals.value
 
     Box(Modifier
         .fillMaxSize()
@@ -60,7 +66,7 @@ fun GoalDetailsScreen(navController: NavController, viewModel: MyViewModelSimple
 
             LazyColumn (modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp)) {
-                items(goals){ goal ->
+                items(goals2){ goal ->
                     Column(modifier =
                         Modifier
                         .padding(top = 15.dp, bottom = 15.dp)
