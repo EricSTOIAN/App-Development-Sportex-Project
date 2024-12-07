@@ -1,12 +1,10 @@
 package com.example.sportsappteamlongfoot.data
 
 import android.content.Context
-import androidx.compose.foundation.layout.Box
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
@@ -148,4 +146,3 @@ data class Workout(
     val burntCalories: Int = 0,
     val isCompleted: Boolean = false
 )
-

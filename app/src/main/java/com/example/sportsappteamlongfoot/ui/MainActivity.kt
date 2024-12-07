@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,7 @@ import com.example.sportsappteamlongfoot.ui.screens.RegisterScreen
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
