@@ -144,3 +144,11 @@ class DataStoreManager (private val context: Context) {
     val burntCalories: Int = 0,
     val isCompleted: Boolean = false
 )
+
+
+data class Goal(
+    val name: String = "",
+    val type: String = "",
+    val endDate: String = "",
+    val description: String = ""
+)
