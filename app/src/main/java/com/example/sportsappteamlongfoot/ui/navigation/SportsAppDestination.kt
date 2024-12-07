@@ -13,8 +13,14 @@ interface AppDestination {
 
 object MainMenu : AppDestination {
     override val route = "main_menu"
-    override val screen: @Composable () -> Unit = { MainScreen() }
+    override val screen: @Composable () -> Unit
+        get() = TODO("Not yet implemented")
+
+    fun screen(onProfileClick: () -> Unit): @Composable () -> Unit = {
+        MainScreen(onProfileClick = onProfileClick)
+    }
 }
+
 
 object Register : AppDestination {
     override val route = "register"
@@ -37,4 +43,9 @@ object Login : AppDestination {
         )
     }
 }
+object Profile : AppDestination {
+    override val route = "profile"
+    override val screen: @Composable () -> Unit = { /* Will be handled by NavHost */ }
+}
+
 val quizAppScreens = listOf(MainMenu)

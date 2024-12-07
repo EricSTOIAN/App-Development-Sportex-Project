@@ -19,8 +19,8 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     private val _lastName = MutableStateFlow("")
     val lastName: StateFlow<String> = _lastName
 
-    private val _age = MutableStateFlow(0)
-    val age: StateFlow<Int> = _age
+    private val _age = MutableStateFlow("")
+    val age: StateFlow<String> = _age
 
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username
@@ -57,7 +57,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             dataStoreManager.saveLastName(lastName)
         }
     }
-    fun saveAge(age: Int) {
+    fun saveAge(age: String) {
         _age.value = age
         viewModelScope.launch {
             dataStoreManager.saveAge(age)

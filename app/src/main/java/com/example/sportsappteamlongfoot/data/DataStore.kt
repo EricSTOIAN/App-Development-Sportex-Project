@@ -23,7 +23,7 @@ class DataStoreManager (private val context: Context){
         val GOAL = stringPreferencesKey("GOAL")
         val FIRST_NAME = stringPreferencesKey("FIRST_NAME")
         val LAST_NAME = stringPreferencesKey("LAST_NAME")
-        val AGE = intPreferencesKey("AGE")
+        val AGE = stringPreferencesKey("AGE")
     }
 
     suspend fun saveFirstName(firstName: String) {
@@ -37,12 +37,11 @@ class DataStoreManager (private val context: Context){
             preferences[LAST_NAME] = lastName
         }
     }
-    suspend fun saveAge(age: Int) {
+    suspend fun saveAge(age: String) {
         context.dataStore.edit { preferences ->
             preferences[AGE] = age
         }
     }
-
 
     suspend fun savePassword(password: String) {
         context.dataStore.edit { preferences ->
@@ -83,9 +82,9 @@ class DataStoreManager (private val context: Context){
         .map { preferences ->
             preferences[LAST_NAME] ?: ""
         }
-    val ageFlow: Flow<Int> = context.dataStore.data
+    val ageFlow: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[AGE] ?: 0
+            preferences[AGE] ?: ""
         }
     val passwordFlow: Flow<String> = context.dataStore.data
         .map { preferences ->
