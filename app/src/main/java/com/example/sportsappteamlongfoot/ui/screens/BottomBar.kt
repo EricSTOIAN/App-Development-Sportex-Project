@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportsappteamlongfoot.ui.navigation.Login
 import com.example.sportsappteamlongfoot.ui.navigation.MainMenu
+import com.example.sportsappteamlongfoot.ui.navigation.Planner
 import com.example.sportsappteamlongfoot.ui.navigation.Profile
 
 @Composable
@@ -31,6 +32,7 @@ fun BottomBar(navController: NavController, modifier: Modifier = Modifier) {
             .height(70.dp)
             .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp)) // Rounded corners
             .padding(8.dp) // Padding inside the box
+            .clip(RoundedCornerShape(16.dp))
     ) {
         Row(
             modifier = Modifier
@@ -49,7 +51,7 @@ fun BottomBar(navController: NavController, modifier: Modifier = Modifier) {
             }
 
             // Calendar Icon
-            IconButton(onClick = { navController.navigate("planner") }) {
+            IconButton(onClick = { navController.navigate(Planner.route) }) {
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "Planner",

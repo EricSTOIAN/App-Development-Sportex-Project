@@ -17,6 +17,7 @@ import com.example.sportsappteamlongfoot.ui.screens.RegisterScreen
 import com.example.sportsappteamlongfoot.ui.MainScreen
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import com.example.sportsappteamlongfoot.ui.screens.GoalScreen
+import com.example.sportsappteamlongfoot.ui.screens.PlannerScreen
 import com.example.sportsappteamlongfoot.ui.screens.ProfileScreen
 import com.example.sportsappteamlongfoot.ui.screens.WorkoutScreen
 import com.example.sportsappteamlongfoot.ui.screens.WorkoutDetailsScreen
@@ -83,6 +84,11 @@ fun AppNavHost(
                     onNavigateToGoal = { navController.navigate("goal_screen") }
                 )
             }
+            composable(route = Planner.route) {
+                PlannerScreen( viewModel = viewModel,navController = navController,onNavigateToGoal = { navController.navigate("goal_screen") },onNavigateToWorkout = { navController.navigate("workout_screen") }
+                )
+            }
+
 
             composable(route = "workout_screen") {
                 WorkoutScreen(navController = navController, viewModel = viewModel)

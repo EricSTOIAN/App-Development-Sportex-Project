@@ -2,6 +2,7 @@ package com.example.sportsappteamlongfoot.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -28,7 +29,8 @@ import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 fun ProfileScreen(navController: NavController,
                   viewModel: MyViewModelSimpleSaved,
                   onNavigateToWorkout: () -> Unit,
-                  onNavigateToGoal: () -> Unit) {
+                  onNavigateToGoal: () -> Unit)
+{
     val firstName by viewModel.firstName.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val age by viewModel.age.collectAsState()
@@ -107,7 +109,6 @@ fun ProfileScreen(navController: NavController,
                             value = newAge,
                             onValueChange = { newAge = it },
                             label = { Text("Age") },
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                         )
                         OutlinedTextField(
                             value = newWeight,
@@ -165,25 +166,7 @@ fun ProfileScreen(navController: NavController,
                     }
                 }
             }
-            // Buttons to Navigate
-            Button(
-                onClick = onNavigateToWorkout,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
 
-                Text("Go to Workout Screen")
-            }
-
-            Button(
-                onClick = onNavigateToGoal,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text("Go to Goal Screen")
-            }
 
         }
 

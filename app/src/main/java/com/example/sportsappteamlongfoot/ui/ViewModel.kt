@@ -7,6 +7,7 @@ import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsappteamlongfoot.data.DataStoreManager
+import com.example.sportsappteamlongfoot.data.Goal
 import com.example.sportsappteamlongfoot.data.Workout
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,8 +45,8 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     private val _weight = MutableStateFlow("")
     val weight: StateFlow<String> = _weight
 
-    private val _goals = MutableStateFlow<List<String>>(emptyList())
-    val goals: StateFlow<List<String>> = _goals
+    private val _goals = MutableStateFlow<List<Goal>>(emptyList())
+    val goals: StateFlow<List<Goal>> = _goals
 
     private val _workouts = MutableStateFlow<List<Workout>>(emptyList())
     val workouts: StateFlow<List<Workout>> = _workouts
@@ -55,12 +56,12 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         loadSettings()
         loadDataFromDataStore()
         prepopulateTestWorkouts()
+        prepopulateTestGoals()
         //()
         // loadTestWorkouts()  // Ensure workouts are loaded when the ViewModel is initialized
         viewModelScope.launch {
             dataStoreManager.firstNameFlow.collect { _firstName.value = it }
             dataStoreManager.lastNameFlow.collect { _lastName.value = it }
-            dataStoreManager.ageFlow.collect { _age.value = it }
             dataStoreManager.goalsFlow.collect { _goals.value = it }
             dataStoreManager.workoutsFlow.collect { _workouts.value = it }
 
@@ -80,15 +81,37 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     }
 
     private fun prepopulateTestWorkouts() {
-        val initialWorkouts = listOf(
-            Workout(name="workout1", description = "RUN BRO PLEASE RUN NOWWWWW RUN FOR YOU LIFEEEEE",date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
-            Workout(name="workout2", description = "test 2",date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
-                   , Workout(name="workout3", description = "test 4",date = LocalDate.now().    minusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
-
-        )
-        _workouts.value = initialWorkouts
-        saveWorkouts(initialWorkouts)
+        viewModelScope.launch {
+            val existingWorkouts = dataStoreManager.workoutsFlow.firstOrNull()
+            if (existingWorkouts.isNullOrEmpty()) {
+                val initialWorkouts = listOf(
+                    Workout(name = "workout1", description = "test 1", date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
+                    Workout(name = "workout2", description = "test 2", date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
+                )
+                _workouts.value = initialWorkouts
+                saveWorkouts(initialWorkouts)
+            } else {
+                println("Existing workouts detected, skipping prepopulation.")
+            }
+        }
     }
+
+    private fun prepopulateTestGoals() {
+        viewModelScope.launch {
+            val existingGoals = dataStoreManager.goalsFlow.firstOrNull()
+            if (existingGoals.isNullOrEmpty()) {
+                val initialGoals = listOf(
+                    Goal(name = "goal1", description = "test 1", date = LocalDate.now().toString()),
+                    Goal(name = "goal2", description = "test 2", date = LocalDate.now().plusDays(2).toString())
+                )
+                _goals.value = initialGoals
+                saveGoals(initialGoals)
+            } else {
+                println("Existing goals detected, skipping prepopulation.")
+            }
+        }
+    }
+
 
     fun saveFirstName(firstName: String) {
         _firstName.value = firstName
@@ -138,6 +161,11 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             }
         }
         viewModelScope.launch {
+            dataStoreManager.ageFlow.collect { age ->
+                _age.value = age
+            }
+        }
+        viewModelScope.launch {
             dataStoreManager.heightFlow.collect { height ->
                 _height.value = height
             }
@@ -145,6 +173,23 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         viewModelScope.launch {
             dataStoreManager.weightFlow.collect { weight ->
                 _weight.value = weight
+            }
+        }
+        viewModelScope.launch {
+            dataStoreManager.workoutsFlow.collect { savedWorkouts ->
+                if (savedWorkouts.isNotEmpty()) {
+                    _workouts.value = savedWorkouts
+                    println("Loaded workouts: $savedWorkouts")
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            dataStoreManager.goalsFlow.collect { savedGoals ->
+                if (savedGoals.isNotEmpty()) {
+                    _goals.value = savedGoals
+                    println("Loaded goals: $savedGoals")
+                }
             }
         }
     }
@@ -172,30 +217,36 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     }
 
 
-    fun saveGoals(goals: List<String>) {
+    private fun saveGoals(goals: List<Goal>) {
         viewModelScope.launch {
             dataStoreManager.saveGoals(goals)
         }
     }
 
-    fun saveWorkouts(workouts: List<Workout>) {
+    private fun saveWorkouts(workouts: List<Workout>) {
         viewModelScope.launch {
             dataStoreManager.saveWorkouts(workouts)
         }
     }
 
-    fun addGoal(goal: String) {
-        val updatedGoals = _goals.value.toMutableList().apply { add(goal) }
-        _goals.value = updatedGoals
-        saveGoals(updatedGoals)
-    }
-
     fun addWorkout(workout: Workout) {
-        println("Adding workout: $workout")
         val updatedWorkouts = _workouts.value.toMutableList().apply { add(workout) }
         _workouts.value = updatedWorkouts
-        saveWorkouts(updatedWorkouts)
+        viewModelScope.launch {
+            dataStoreManager.saveWorkouts(updatedWorkouts)
+            println("Workout saved: $updatedWorkouts")
+        }
     }
+
+    fun addGoal(goal: Goal) {
+        val updatedGoals = _goals.value.toMutableList().apply { add(goal) }
+        _goals.value = updatedGoals
+        viewModelScope.launch {
+            dataStoreManager.saveGoals(updatedGoals)
+            println("Goal saved: $updatedGoals")
+        }
+    }
+
 
     fun getWorkoutForToday(): Workout? {
        val today = LocalDate.now().toString() // Ensure this matches Workout.date
@@ -232,8 +283,44 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         return Pair(completedWorkouts, totalWorkouts)
     }
 
+
+
     fun getAllWorkouts(): StateFlow<List<Workout>> = _workouts
 
+    fun getWeeklyWorkouts(): List<Workout> {
+        // Determine the start of the current week (Monday)
+        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
 
+        // Filter the workouts to include only those in the current week
+        val weeklyWorkouts = _workouts.value.filter {
+            it.date != null && LocalDate.parse(it.date).isAfter(currentWeekStart.minusDays(1)) &&
+                    LocalDate.parse(it.date).isBefore(currentWeekStart.plusWeeks(1))
+        }
+        println("weekly"+weeklyWorkouts)
+        return weeklyWorkouts
+    }
+
+    fun getWeeklyGoals(): List<Goal> {
+        // Determine the start of the current week (Monday)
+        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+
+        // Filter the workouts to include only those in the current week
+        val weeklyGoals = _goals.value.filter {
+            it.date != null && LocalDate.parse(it.date).isAfter(currentWeekStart.minusDays(1)) &&
+                    LocalDate.parse(it.date).isBefore(currentWeekStart.plusWeeks(1))
+        }
+        println("weekly"+weeklyGoals)
+        return weeklyGoals
+    }
+    fun getUpcomingWorkouts(): List<Workout> {
+        return _workouts.value
+            .filter { LocalDate.parse(it.date).isAfter(LocalDate.now().minusDays(1)) }
+            .sortedBy { LocalDate.parse(it.date) }
+    }
+    fun getUpcomingGoals(): List<Goal> {
+        return _goals.value
+            .filter { LocalDate.parse(it.date).isAfter(LocalDate.now().minusDays(1)) }
+            .sortedBy { LocalDate.parse(it.date) }
+    }
 
 }
