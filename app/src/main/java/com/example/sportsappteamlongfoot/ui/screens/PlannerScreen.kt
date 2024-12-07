@@ -197,6 +197,51 @@ fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Uni
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Upcoming Workouts Title
+            Text(
+                text = "Upcoming Workouts",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            // Upcoming Workouts Carousel
+            LazyRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(upcomingWorkouts) { workout ->
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .size(width = 200.dp, height = 100.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = workout.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Date: ${workout.date}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         // Bottom Bar

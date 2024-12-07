@@ -164,25 +164,7 @@ fun ProfileScreen(navController: NavController,
                     }
                 }
             }
-            // Buttons to Navigate
-            Button(
-                onClick = onNavigateToWorkout,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
 
-                Text("Add Workout")
-            }
-
-            Button(
-                onClick = onNavigateToGoal,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text("Go to Goal Screen")
-            }
 
         }
 
