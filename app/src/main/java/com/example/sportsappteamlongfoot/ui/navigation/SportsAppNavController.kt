@@ -13,6 +13,7 @@ import com.example.sportsappteamlongfoot.ui.screens.LoginScreen
 import com.example.sportsappteamlongfoot.ui.screens.RegisterScreen
 import com.example.sportsappteamlongfoot.ui.MainScreen
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
+import com.example.sportsappteamlongfoot.ui.screens.ProfileScreen
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
 
 // Define a CompositionLocal for accessing NavController anywhere in the composable hierarchy
@@ -25,7 +26,7 @@ val LocalNavController = compositionLocalOf<NavHostController> {
 fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    viewModel: MyViewModelSimpleSaved = viewModel() // Inject ViewModel here
+    viewModel: MyViewModelSimpleSaved = viewModel()
 ) {
     SportsAppTeamLongFootTheme {
         NavHost(
@@ -34,27 +35,35 @@ fun AppNavHost(
             modifier = modifier
         ) {
             composable(route = MainMenu.route) {
-                MainScreen() // Main screen for logged-in users
+                MainMenu.screen(
+                    onProfileClick = {
+                        navController.navigate(Profile.route)
+                    }
+                )()
             }
             composable(route = Register.route) {
                 RegisterScreen(
                     onNavigateToLogin = {
-                        navController.navigate(Login.route) // Navigate to Login screen
+                        navController.navigate(Login.route)
                     },
-                    navController = navController, // Pass NavController
-                    viewModel = viewModel // Pass ViewModel
+                    navController = navController,
+                    viewModel = viewModel
                 )
             }
             composable(route = Login.route) {
                 LoginScreen(
                     onNavigateToRegister = {
-                        navController.navigate(Register.route) // Navigate to Register screen
+                        navController.navigate(Register.route)
                     },
                     onNavigateToMenu = {
-                        navController.navigate(MainMenu.route) // Navigate to Main Menu
+                        navController.navigate(MainMenu.route)
                     },
-                    viewModel = viewModel // Pass ViewModel
+                    viewModel = viewModel
                 )
             }
+            composable(route = Profile.route) {
+                ProfileScreen(viewModel = viewModel)
+            }
         }
-    }}
+    }
+}

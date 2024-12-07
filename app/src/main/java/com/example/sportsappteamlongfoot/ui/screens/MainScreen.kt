@@ -3,6 +3,7 @@ package com.example.sportsappteamlongfoot.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -26,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.painter.Painter
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(modifier: Modifier = Modifier,  onProfileClick: () -> Unit ) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -51,6 +52,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
+                    .clickable { onProfileClick() } // Navigate to Profile when clicked
             )
         }
 
@@ -214,8 +216,8 @@ fun CircularProgressBar(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    MainScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MainScreenPreview() {
+//    MainScreen()
+//}
