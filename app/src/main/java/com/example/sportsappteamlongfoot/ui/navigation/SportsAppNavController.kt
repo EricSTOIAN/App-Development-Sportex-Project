@@ -45,8 +45,10 @@ fun AppNavHost(
                     navController = navController,  // Pass navController here
                     onProfileClick = {
                         navController.navigate(Profile.route)
+
                     },
                     viewModel = viewModel
+
                 )
             }
             composable(route = Register.route) {
@@ -79,10 +81,12 @@ fun AppNavHost(
             }
 
             composable(route = "workout_screen") {
-                WorkoutScreen(navController = navController)
+                WorkoutScreen(navController = navController, viewModel = viewModel)
             }
             composable(route = "goal_screen") {
-                GoalScreen(navController = navController)
+
+                GoalScreen(navController = navController, viewModel = viewModel)
+
             }
         }
     }

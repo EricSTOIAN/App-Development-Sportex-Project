@@ -36,7 +36,6 @@ import androidx.navigation.NavController
 fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
     val workouts by viewModel.workouts.collectAsState()
 
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -82,10 +81,10 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Pass dynamic values here for CaloriesCard
-                //  CaloriesCard(title = "Burnt Calories", value = "$caloriesBurnt kcal", modifier = Modifier.weight(1f))
+              //  CaloriesCard(title = "Burnt Calories", value = "$caloriesBurnt kcal", modifier = Modifier.weight(1f))
 
                 // Pass dynamic values here for WorkoutsCard
-                //  WorkoutsCard(completed = workoutsCompleted, total = workouts.size, modifier = Modifier.weight(1f))
+              //  WorkoutsCard(completed = workoutsCompleted, total = workouts.size, modifier = Modifier.weight(1f))
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -108,13 +107,13 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
 //                    }
 //                }
 //            } else {
-            LargeEmptyCard(modifier = Modifier) {
-                Text(
-                    text = "Rest Day",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                // }
+                LargeEmptyCard(modifier = Modifier) {
+                    Text(
+                        text = "Rest Day",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+               // }
             }
         }
 

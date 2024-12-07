@@ -1,3 +1,4 @@
+
 package com.example.sportsappteamlongfoot.ui
 
 import androidx.compose.foundation.background
@@ -76,5 +77,6 @@ fun BottomBar(navController: NavController, modifier: Modifier = Modifier) {
         }
     }
 }
+
 
 

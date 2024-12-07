@@ -1,5 +1,7 @@
 package com.example.sportsappteamlongfoot.ui.screens
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -15,12 +17,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.example.sportsappteamlongfoot.data.Workout
+import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WorkoutScreen(navController: NavController) {
+fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) {
     var name by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -57,7 +62,6 @@ fun WorkoutScreen(navController: NavController) {
             onValueChange = { name = it },
             label = { Text("Name") },
             modifier = Modifier.fillMaxWidth()
-
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -115,10 +119,19 @@ fun WorkoutScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = { navController.popBackStack()}) {
+            Button(onClick = { navController.popBackStack() }) {
                 Text(text = "Cancel")
             }
             Button(onClick = {
+                val workout = Workout(
+                    name = name,
+                    type = selectedType,
+                    date = date,
+                    description = description,
+                    burntCalories = 0,
+                    isCompleted = false
+                )
+                viewModel.addWorkout(workout)
                 isSnackbarVisible = true
             }) {
                 Text(text = "Add")
@@ -147,6 +160,7 @@ fun WorkoutScreen(navController: NavController) {
         }
     }
 }
+
 
 // Helper function for showing DatePickerDialog
 private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
@@ -206,3 +220,4 @@ fun DropdownMenuComponent(
         }
     }
 }
+

@@ -20,12 +20,13 @@ object MainMenu : AppDestination {
         MainScreen(
             onProfileClick = onProfileClick,
             navController = TODO(),
+
             modifier = TODO(),
             viewModel = TODO()
+
         )
     }
 }
-
 
 object Register : AppDestination {
     override val route = "register"
