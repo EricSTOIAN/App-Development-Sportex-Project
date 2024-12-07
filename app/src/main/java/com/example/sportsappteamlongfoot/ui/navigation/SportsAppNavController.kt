@@ -19,6 +19,7 @@ import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import com.example.sportsappteamlongfoot.ui.screens.GoalScreen
 import com.example.sportsappteamlongfoot.ui.screens.ProfileScreen
 import com.example.sportsappteamlongfoot.ui.screens.WorkoutScreen
+import com.example.sportsappteamlongfoot.ui.screens.WorkoutDetailsScreen
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
 
 // Define a CompositionLocal for accessing NavController anywhere in the composable hierarchy
@@ -46,6 +47,9 @@ fun AppNavHost(
                     onProfileClick = {
                         navController.navigate(Profile.route)
 
+                    },
+                    onWorkoutClick = {
+                        navController.navigate("workout_details_screen")
                     },
                     viewModel = viewModel
 
@@ -87,6 +91,9 @@ fun AppNavHost(
 
                 GoalScreen(navController = navController, viewModel = viewModel)
 
+            }
+            composable(route = "workout_details_screen") {
+                WorkoutDetailsScreen(navController = navController, viewModel = viewModel, modifier = Modifier)
             }
         }
     }

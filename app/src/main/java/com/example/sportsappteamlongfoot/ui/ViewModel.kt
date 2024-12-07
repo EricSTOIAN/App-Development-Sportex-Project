@@ -81,7 +81,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     private fun prepopulateTestWorkouts() {
         val initialWorkouts = listOf(
-            Workout(name="workout1", description = "test 1",date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
+            Workout(name="workout1", description = "RUN BRO PLEASE RUN NOWWWWW RUN FOR YOU LIFEEEEE",date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
             Workout(name="workout2", description = "test 2",date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
                    , Workout(name="workout3", description = "test 4",date = LocalDate.now().    minusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
 
