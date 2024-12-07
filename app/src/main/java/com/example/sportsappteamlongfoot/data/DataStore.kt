@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -21,7 +22,8 @@ class DataStoreManager (private val context: Context) {
         val USERNAME = stringPreferencesKey("USERNAME")
         val HEIGHT = stringPreferencesKey("HEIGHT")
         val WEIGHT = stringPreferencesKey("WEIGHT")
-        val GOAL = stringPreferencesKey("GOAL")
+        val GOALS = stringPreferencesKey("GOALS")
+        val WORKOUTS = stringPreferencesKey("WORKOUTS")
         val FIRST_NAME = stringPreferencesKey("FIRST_NAME")
         val LAST_NAME = stringPreferencesKey("LAST_NAME")
         val AGE = stringPreferencesKey("AGE")
@@ -69,6 +71,23 @@ class DataStoreManager (private val context: Context) {
         }
     }
 
+    // Save goals as JSON string
+    suspend fun saveGoals(goals: List<String>) {
+        val json = Gson().toJson(goals)
+        context.dataStore.edit { preferences ->
+            preferences[GOALS] = json
+        }
+    }
+
+    // Save workouts as JSON string
+    suspend fun saveWorkouts(workouts: List<Workout>) {
+        val json = Gson().toJson(workouts)
+        println("Saving workouts to DataStore: $json")
+        context.dataStore.edit { preferences ->
+            preferences[WORKOUTS] = json
+        }
+    }
+
     val firstNameFlow: Flow<String> = context.dataStore.data
         .map { preferences ->
             preferences[FIRST_NAME] ?: ""
@@ -102,4 +121,26 @@ class DataStoreManager (private val context: Context) {
             preferences[WEIGHT] ?: ""
         }
 
+    // Retrieve goals as a Flow<List<String>>
+    val goalsFlow: Flow<List<String>> = context.dataStore.data.map { preferences ->
+        val json = preferences[GOALS] ?: "[]"
+        Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
+    }
+
+    // Retrieve workouts as a Flow<List<Workout>>
+    val workoutsFlow: Flow<List<Workout>> = context.dataStore.data.map { preferences ->
+        val json = preferences[WORKOUTS] ?: "[]"
+        println("Retrieved workouts from DataStore: $json")
+        Gson().fromJson(json, object : TypeToken<List<Workout>>() {}.type)
+    }
 }
+
+
+    data class Workout(
+    val name: String = "",
+    val type: String = "",
+    val date: String = "",
+    val description: String = "",
+    val burntCalories: Int = 0,
+    val isCompleted: Boolean = false
+)
