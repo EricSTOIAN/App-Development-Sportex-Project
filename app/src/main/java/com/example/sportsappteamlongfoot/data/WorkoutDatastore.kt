@@ -8,44 +8,39 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
 
 const val WORKOUT_DATASTORE ="workout_datastore"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = WORKOUT_DATASTORE)
 
-class RepositoryWorkout(private val context: Context){
-    //The set of information that will be stored in the DataStore
-    //are indicated using "preferencesKeys
-
+class RepositoryWorkout(private val context: Context) {
     companion object {
-        val NAME = stringPreferencesKey("NAME")
-        val TYPE = stringPreferencesKey("TYPE")
-        val DATE = stringPreferencesKey("DATE")
-        val DESCRIPTION = stringPreferencesKey("DESCRIPTION")
+        val WORKOUTS = stringPreferencesKey("WORKOUTS")
     }
 
-    /**
-     * Update the user settings in the DataStore.
-     */
-    suspend fun saveWorkout (workout: Workout) {
+    // Save multiple workouts
+    suspend fun saveWorkouts(workouts: List<Workout>) {
+        val workoutsJson = Gson().toJson(workouts)
         context.dataStore.edit {
-            it[NAME] = workout.name
-            it[TYPE] = workout.type
-            it[DATE] = workout.date
-            it[DESCRIPTION] = workout.description
+            it[WORKOUTS] = workoutsJson
         }
     }
 
-    /**
-     * Retrieves the settings data from the Datastore
-     */
-    fun getWorkouts(): Flow<Workout> = context.dataStore.data.map {
-        Workout(
-            name = it[NAME] ?: "",
-            type = it[TYPE] ?: "",
-            date = it[DATE] ?: "",
-            description = it[DESCRIPTION] ?: ""
-        )
-    }
+    // Retrieve the list of workouts
+    fun getWorkouts(): Flow<List<Workout>> = context.dataStore.data
+        .map {
+            val workoutsJson = it[WORKOUTS] ?: "[]"
+            Gson().fromJson(workoutsJson, Array<Workout>::class.java).toList()
+        }
 }
 
-class Workout(val name:String, val type: String, val date: String, val description:String)
+class Workout(
+    val name: String,
+    val type: String,
+    val date: String,
+    val description: String,
+    val burntCalories: Int,
+    val isCompleted: Boolean
+)

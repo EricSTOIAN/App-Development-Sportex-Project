@@ -1,24 +1,40 @@
 package com.example.sportsappteamlongfoot.ui.screens
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @Composable
-fun AddWorkoutGoalScreen() {
+fun WorkoutScreen(navController: NavController) {
     var name by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    val workoutTypes = listOf("Cardio", "Strength", "Flexibility")
+    var isSnackbarVisible by remember { mutableStateOf(false) }
+    val workoutTypes = listOf(
+        "Cardio", "Strength", "Flexibility", "Swimming", "Running", "Cycling", "Yoga",
+        "Pilates", "Hiking", "Rowing", "Dancing", "Boxing", "CrossFit", "Zumba",
+        "Climbing", "HIIT", "Martial Arts", "Weightlifting", "Stretching", "Jump Rope",
+        "Walking", "Elliptical Training", "Spin Class"
+    )
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -28,7 +44,7 @@ fun AddWorkoutGoalScreen() {
     ) {
         // Screen Header
         Text(
-            text = "Adding Workout/Goal",
+            text = "Adding Workout",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -41,6 +57,7 @@ fun AddWorkoutGoalScreen() {
             onValueChange = { name = it },
             label = { Text("Name") },
             modifier = Modifier.fillMaxWidth()
+
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -55,12 +72,19 @@ fun AddWorkoutGoalScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Date Input
-        TextField(
-            value = date,
-            onValueChange = { date = it },
-            label = { Text("Date") },
+        OutlinedButton(
+            onClick = {
+                showDatePicker(context) { selectedDate ->
+                    date = selectedDate
+                }
+            },
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = if (date.isEmpty()) "Select Date" else date,
+                color = if (date.isNotEmpty()) Color.Black else MaterialTheme.colorScheme.onBackground
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         // Description Input
@@ -91,14 +115,57 @@ fun AddWorkoutGoalScreen() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = { /* Cancel Action */ }) {
+            Button(onClick = { navController.popBackStack()}) {
                 Text(text = "Cancel")
             }
-            Button(onClick = { /* Add Action */ }) {
+            Button(onClick = {
+                isSnackbarVisible = true
+            }) {
                 Text(text = "Add")
             }
         }
+
+        // Snackbar
+        if (isSnackbarVisible) {
+            Snackbar(
+                action = {
+                    TextButton(onClick = { isSnackbarVisible = false }) {
+                        Text("OK")
+                    }
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text("Workout added successfully!")
+            }
+
+            // Delayed dismissal
+            LaunchedEffect(Unit) {
+                kotlinx.coroutines.delay(3000)
+                isSnackbarVisible = false
+                navController.popBackStack()
+            }
+        }
     }
+}
+
+// Helper function for showing DatePickerDialog
+private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val datePickerDialog = android.app.DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val formattedDate = "$selectedYear/${selectedMonth + 1}/$selectedDay"
+            onDateSelected(formattedDate)
+        },
+        year,
+        month,
+        day
+    )
+    datePickerDialog.show()
 }
 
 @Composable
@@ -118,7 +185,10 @@ fun DropdownMenuComponent(
             onClick = { expanded = true },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = if (selectedOption.isEmpty()) "Select" else selectedOption)
+            Text(
+                text = if (selectedOption.isEmpty()) "Select" else selectedOption,
+                color = if (selectedOption.isNotEmpty()) Color.Black else MaterialTheme.colorScheme.onBackground
+            )
         }
         DropdownMenu(
             expanded = expanded,
@@ -130,16 +200,9 @@ fun DropdownMenuComponent(
                         onOptionSelected(option)
                         expanded = false
                     },
-                    text = { Text(text = option) }
+                    text = { Text(text = option, color = Color.Black) }
                 )
             }
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun AddWorkoutGoalScreenPreview() {
-    AddWorkoutGoalScreen()
-}
-
