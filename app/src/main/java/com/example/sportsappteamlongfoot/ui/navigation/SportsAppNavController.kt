@@ -81,7 +81,7 @@ fun AppNavHost(
                 )
             }
             composable(route = Planner.route) {
-                PlannerScreen( viewModel = viewModel,navController = navController,onNavigateToWorkout = { navController.navigate("workout_screen") }
+                PlannerScreen( viewModel = viewModel,navController = navController,onNavigateToGoal = { navController.navigate("goal_screen") },onNavigateToWorkout = { navController.navigate("workout_screen") }
                 )
             }
 
