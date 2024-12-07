@@ -1,4 +1,5 @@
 package com.example.sportsappteamlongfoot.ui.navigation
+import android.annotation.SuppressLint
 import com.example.sportsappteamlongfoot.ui.navigation.MainMenu
 
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ object MainMenu : AppDestination {
     override val screen: @Composable () -> Unit
         get() = TODO("Not yet implemented")
 
+    @SuppressLint("NewApi")
     fun screen(onProfileClick: () -> Unit): @Composable () -> Unit = {
         MainScreen(
             onProfileClick = onProfileClick,

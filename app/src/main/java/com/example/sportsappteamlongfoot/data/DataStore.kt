@@ -136,7 +136,7 @@ class DataStoreManager (private val context: Context) {
 }
 
 
-    data class Workout(
+data class Workout(
     val name: String = "",
     val type: String = "",
     val date: String = "",
