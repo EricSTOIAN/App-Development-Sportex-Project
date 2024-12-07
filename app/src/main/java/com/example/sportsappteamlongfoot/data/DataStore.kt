@@ -1,12 +1,10 @@
 package com.example.sportsappteamlongfoot.data
 
 import android.content.Context
-import androidx.compose.foundation.layout.Box
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
@@ -72,7 +70,7 @@ class DataStoreManager (private val context: Context) {
     }
 
     // Save goals as JSON string
-    suspend fun saveGoals(goals: List<String>) {
+    suspend fun saveGoals(goals: MutableList<Goal>) {
         val json = Gson().toJson(goals)
         context.dataStore.edit { preferences ->
             preferences[GOALS] = json
@@ -122,9 +120,9 @@ class DataStoreManager (private val context: Context) {
         }
 
     // Retrieve goals as a Flow<List<String>>
-    val goalsFlow: Flow<List<String>> = context.dataStore.data.map { preferences ->
+    val goalsFlow: Flow<List<Goal>> = context.dataStore.data.map { preferences ->
         val json = preferences[GOALS] ?: "[]"
-        Gson().fromJson(json, object : TypeToken<List<String>>() {}.type)
+        Gson().fromJson(json, object : TypeToken<List<Goal>>() {}.type)
     }
 
     // Retrieve workouts as a Flow<List<Workout>>

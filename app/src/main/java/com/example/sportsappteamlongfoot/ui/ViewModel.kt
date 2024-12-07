@@ -3,15 +3,14 @@ package com.example.sportsappteamlongfoot.ui
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsappteamlongfoot.data.DataStoreManager
+import com.example.sportsappteamlongfoot.data.Goal
 import com.example.sportsappteamlongfoot.data.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
@@ -39,8 +38,8 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     private val _weight = MutableStateFlow("")
     val weight: StateFlow<String> = _weight
 
-    private val _goals = MutableStateFlow<List<String>>(emptyList())
-    val goals: StateFlow<List<String>> = _goals
+    private val _goals = MutableStateFlow<List<Goal>>(emptyList())
+    val goals: StateFlow<List<Goal>> = _goals
 
     private val _workouts = MutableStateFlow<List<Workout>>(emptyList())
     val workouts: StateFlow<List<Workout>> = _workouts
@@ -59,8 +58,6 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             dataStoreManager.workoutsFlow.collect { _workouts.value = it }
 
         }
-
-
     }
 
     fun saveFirstName(firstName: String) {
@@ -145,7 +142,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     }
 
 
-    fun saveGoals(goals: List<String>) {
+    fun saveGoals(goals: MutableList<Goal>) {
         viewModelScope.launch {
             dataStoreManager.saveGoals(goals)
         }
@@ -157,7 +154,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         }
     }
 
-    fun addGoal(goal: String) {
+    fun addGoal(goal: Goal) {
         val updatedGoals = _goals.value.toMutableList().apply { add(goal) }
         _goals.value = updatedGoals
         saveGoals(updatedGoals)
@@ -169,6 +166,4 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         _workouts.value = updatedWorkouts
         saveWorkouts(updatedWorkouts)
     }
-
-
 }
