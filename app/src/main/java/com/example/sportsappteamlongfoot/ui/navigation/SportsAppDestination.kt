@@ -58,7 +58,8 @@ object Planner : AppDestination {
     override val screen: @Composable () -> Unit = {
         PlannerScreen(
             modifier = TODO(),
-            viewModel = TODO()
+            viewModel = TODO(),
+            navController = TODO()
         )
     }
 }

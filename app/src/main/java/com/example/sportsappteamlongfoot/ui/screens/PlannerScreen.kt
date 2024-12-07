@@ -32,16 +32,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.navigation.NavController
 import com.example.sportsappteamlongfoot.data.Workout
+import com.example.sportsappteamlongfoot.ui.BottomBar
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.WeekFields
 import java.util.Locale
+import androidx.compose.foundation.layout.*
+
 
 @SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved) {
+fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved, navController: NavController) {
     // Observe the state of workouts from the ViewModel
     val workouts = viewModel.getWeeklyWorkouts()
 
@@ -56,75 +60,86 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
         weeklyWorkouts.add(Pair(dayOfWeek, dayWorkouts))
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        // Display the starting date of the week at the top
-        Text(
-            text = "Planner",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp)) // Add spacing between titles
-
-        Text(
-            text = "Week of ${weekStart.month} ${weekStart.dayOfMonth}",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        LazyRow(
-            modifier = Modifier.fillMaxSize()
+    Box(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            items(weeklyWorkouts) { (dayOfWeek, dayWorkouts) ->
-                // Display the day of the week above the card
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .width(100.dp)
-                        .padding(horizontal = 8.dp)
-                ) {
-                    Text(
-                        text = dayOfWeek.toString().substring(0, 3),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Black,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+            // Display the starting date of the week at the top
+            Text(
+                text = "Planner",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
-                    // Display the workouts inside cards, change background color based on the presence of workouts
-                    Card(
+            Spacer(modifier = Modifier.height(8.dp)) // Add spacing between titles
+
+            Text(
+                text = "Week of ${weekStart.month} ${weekStart.dayOfMonth}",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            LazyRow(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(weeklyWorkouts) { (dayOfWeek, dayWorkouts) ->
+                    // Display the day of the week above the card
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .background(if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray)
-                            .fillMaxWidth()
-                            .height(120.dp), // Adjust height as necessary
-                        shape = RoundedCornerShape(8.dp)
+                            .width(100.dp)
+                            .padding(horizontal = 8.dp)
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(8.dp)
+                        Text(
+                            text = dayOfWeek.toString().substring(0, 3),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Black,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        // Display the workouts inside cards, change background color based on the presence of workouts
+                        Card(
+                            modifier = Modifier
+                                //.background(if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray)
+                                .fillMaxWidth()
+                                .height(120.dp), // Adjust height as necessary
+                            shape = RoundedCornerShape(8.dp),
+                                    colors = CardDefaults.cardColors(
+                                    containerColor = if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray
+                                    )
+
                         ) {
-                            if (dayWorkouts.isEmpty()) {
-                                Text(
-                                    text = "No workouts",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White
-                                )
-                            } else {
-                                dayWorkouts.forEach { workout ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                if (dayWorkouts.isEmpty()) {
                                     Text(
-                                        text = workout.name,
+                                        text = "No workouts",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = Color.White
                                     )
+                                } else {
+                                    dayWorkouts.forEach { workout ->
+                                        Text(
+                                            text = workout.name,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color.White
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.width(16.dp)) // Add spacing between days
+                    Spacer(modifier = Modifier.width(16.dp)) // Add spacing between days
+                }
             }
         }
+
+        // Bottom bar added here
+        BottomBar(navController = navController, Modifier.align(Alignment.BottomEnd))
     }
 }
 
@@ -132,8 +147,10 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
 @Composable
 fun PlannerScreenPreview() {
     PlannerScreen(
-        modifier = Modifier,
-        viewModel = TODO() // Provide a mock ViewModel here if needed
+        modifier = TODO(),
+        viewModel = TODO(),
+        navController = TODO()
     )
 }
+
 

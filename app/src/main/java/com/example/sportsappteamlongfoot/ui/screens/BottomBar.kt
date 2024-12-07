@@ -32,6 +32,7 @@ fun BottomBar(navController: NavController, modifier: Modifier = Modifier) {
             .height(70.dp)
             .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp)) // Rounded corners
             .padding(8.dp) // Padding inside the box
+
     ) {
         Row(
             modifier = Modifier

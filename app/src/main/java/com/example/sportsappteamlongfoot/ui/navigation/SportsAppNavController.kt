@@ -81,7 +81,7 @@ fun AppNavHost(
                 )
             }
             composable(route = Planner.route) {
-                PlannerScreen( viewModel = viewModel
+                PlannerScreen( viewModel = viewModel,navController = navController,
                 )
             }
 
