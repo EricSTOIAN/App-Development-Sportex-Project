@@ -36,7 +36,7 @@ import androidx.navigation.NavController
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
+fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, onWorkoutClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
     val workouts by viewModel.workouts.collectAsState()
     val todaysWorkout = viewModel.getWorkoutForToday()
     val caloriesBurnt = viewModel.getCaloriesForCurrentWeek()
@@ -85,16 +85,15 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
 
             // Show today's workout or "Rest Day"
             if (todaysWorkout != null) {
-                LargeEmptyCard(modifier = Modifier) {
+                LargeEmptyCard(modifier = Modifier, onWorkoutClick) {
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(todaysWorkout.name ?: "No Name", style = MaterialTheme.typography.bodyLarge)
-                        Text(todaysWorkout.description ?: "No Description", style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             } else {
-                LargeEmptyCard(modifier = Modifier) {
+                LargeEmptyCard(modifier = Modifier, onWorkoutClick) {
                     Text(
                         text = "Rest Day",
                         style = MaterialTheme.typography.bodyLarge,
@@ -224,7 +223,7 @@ fun CircularProgressBar(
 }
 
 @Composable
-fun LargeEmptyCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, content: @Composable () -> Unit) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -248,13 +247,13 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, content: @Composable () -> Uni
                     contentAlignment = Alignment.BottomEnd
                 ) {
                     Button(
-                        onClick = { /* Handle click */ },
+                        onClick = { onWorkoutClick() },
                         // Making the button background transparent
                     ) {
                         Text(
-                            text = "View More",
+                            text="View More",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White
+                            color = Color.Black
                         )
                     }
                 }
