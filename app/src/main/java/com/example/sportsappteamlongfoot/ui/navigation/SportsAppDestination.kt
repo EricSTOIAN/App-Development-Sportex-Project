@@ -1,10 +1,12 @@
 package com.example.sportsappteamlongfoot.ui.navigation
+import android.annotation.SuppressLint
 import com.example.sportsappteamlongfoot.ui.navigation.MainMenu
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.sportsappteamlongfoot.ui.MainScreen
 import com.example.sportsappteamlongfoot.ui.screens.LoginScreen
+import com.example.sportsappteamlongfoot.ui.screens.PlannerScreen
 import com.example.sportsappteamlongfoot.ui.screens.RegisterScreen
 interface AppDestination {
     val route: String
@@ -16,6 +18,7 @@ object MainMenu : AppDestination {
     override val screen: @Composable () -> Unit
         get() = TODO("Not yet implemented")
 
+    @SuppressLint("NewApi")
     fun screen(onProfileClick: () -> Unit): @Composable () -> Unit = {
         MainScreen(
             onProfileClick = onProfileClick,
@@ -46,6 +49,18 @@ object Login : AppDestination {
             onNavigateToMenu = { /* Navigate to MainMenu */ },
             modifier = TODO(),
             viewModel = TODO()
+        )
+    }
+}
+
+object Planner : AppDestination {
+    override val route = "planner"
+    override val screen: @Composable () -> Unit = {
+        PlannerScreen(
+            modifier = TODO(),
+            viewModel = TODO(),
+            navController = TODO(),
+            onNavigateToWorkout = TODO()
         )
     }
 }

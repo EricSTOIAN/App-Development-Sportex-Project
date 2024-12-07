@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +22,7 @@ import androidx.navigation.NavController
 import com.example.sportsappteamlongfoot.ui.BottomBar
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
+@SuppressLint("NewApi")
 @Composable
 fun ProfileScreen(navController: NavController,
                   viewModel: MyViewModelSimpleSaved,
@@ -162,25 +164,7 @@ fun ProfileScreen(navController: NavController,
                     }
                 }
             }
-            // Buttons to Navigate
-            Button(
-                onClick = onNavigateToWorkout,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
 
-                Text("Go to Workout Screen")
-            }
-
-            Button(
-                onClick = onNavigateToGoal,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text("Go to Goal Screen")
-            }
 
         }
 
