@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.common)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.crashlytics.buildtools)
 //    implementation(libs.androidx.room.ktx)
 //    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
@@ -79,5 +80,8 @@ dependencies {
 
     // add the dependency for the Google AI client SDK for Android
     //implementation(libs.google.generativeai)
+   // implementation(libs.gson)
+    implementation ("com.google.code.gson:gson:2.8.9")
     implementation(libs.androidx.datastore.preferences)
+
 }

@@ -2,7 +2,9 @@ package com.example.sportsappteamlongfoot.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -18,7 +20,7 @@ private val DarkColorScheme = darkColorScheme(
     background = Color(0xFFB5D0FA),
     surface = Color(0xFFA1C5F8),
     onPrimary = Color(0xFF1A1E25),
-    onSecondary = Color(0xFF1A1E25),
+    onSecondary = Color(0xFFF5F5F5),
     onBackground =Color(0xFF1A1E25),
     onSurface =Color(0xFF1A1E25),
 )
@@ -66,5 +68,4 @@ fun SportsAppTeamLongFootTheme(
         content = content
     )
 }
-
 

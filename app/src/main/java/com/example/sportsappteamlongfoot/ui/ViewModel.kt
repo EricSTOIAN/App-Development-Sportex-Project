@@ -1,14 +1,19 @@
 package com.example.sportsappteamlongfoot.ui
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsappteamlongfoot.data.DataStoreManager
+import com.example.sportsappteamlongfoot.data.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     // private UI state (MutableStateFlow)
     private val dataStoreManager = DataStoreManager(context)
@@ -33,15 +38,29 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     private val _weight = MutableStateFlow("")
     val weight: StateFlow<String> = _weight
+
+    private val _goals = MutableStateFlow<List<String>>(emptyList())
+    val goals: StateFlow<List<String>> = _goals
+
+    private val _workouts = MutableStateFlow<List<Workout>>(emptyList())
+    val workouts: StateFlow<List<Workout>> = _workouts
+
     /* Method called when ViewModel is first created */
     init {
+        loadSettings()
+
+        //()
+        // loadTestWorkouts()  // Ensure workouts are loaded when the ViewModel is initialized
         viewModelScope.launch {
             dataStoreManager.firstNameFlow.collect { _firstName.value = it }
             dataStoreManager.lastNameFlow.collect { _lastName.value = it }
             dataStoreManager.ageFlow.collect { _age.value = it }
+            dataStoreManager.goalsFlow.collect { _goals.value = it }
+            dataStoreManager.workoutsFlow.collect { _workouts.value = it }
+
         }
-        // Start collecting the data from the data store when the ViewModel is created.
-        loadSettings()
+
+
     }
 
     fun saveFirstName(firstName: String) {
@@ -57,12 +76,14 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             dataStoreManager.saveLastName(lastName)
         }
     }
+
     fun saveAge(age: String) {
         _age.value = age
         viewModelScope.launch {
             dataStoreManager.saveAge(age)
         }
     }
+
     fun saveHeight(height: String) {
         _height.value = height
         viewModelScope.launch {
@@ -76,6 +97,8 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             dataStoreManager.saveWeight(weight)
         }
     }
+
+
     private fun loadSettings() {
         viewModelScope.launch {
             dataStoreManager.usernameFlow.collect { username ->
@@ -115,10 +138,37 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     }
 
     fun checkLogin(usernameIn: String, passwordIn: String): Boolean {
-        if(usernameIn == _username.value && passwordIn == _password.value){
+        if (usernameIn == _username.value && passwordIn == _password.value) {
             return true
         }
         return false
     }
+
+
+    fun saveGoals(goals: List<String>) {
+        viewModelScope.launch {
+            dataStoreManager.saveGoals(goals)
+        }
+    }
+
+    fun saveWorkouts(workouts: List<Workout>) {
+        viewModelScope.launch {
+            dataStoreManager.saveWorkouts(workouts)
+        }
+    }
+
+    fun addGoal(goal: String) {
+        val updatedGoals = _goals.value.toMutableList().apply { add(goal) }
+        _goals.value = updatedGoals
+        saveGoals(updatedGoals)
+    }
+
+    fun addWorkout(workout: Workout) {
+        println("Adding workout: $workout")
+        val updatedWorkouts = _workouts.value.toMutableList().apply { add(workout) }
+        _workouts.value = updatedWorkouts
+        saveWorkouts(updatedWorkouts)
+    }
+
 
 }
