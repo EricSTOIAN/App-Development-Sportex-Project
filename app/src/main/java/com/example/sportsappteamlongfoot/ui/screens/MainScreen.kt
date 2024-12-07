@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,11 +33,14 @@ import androidx.compose.ui.graphics.painter.Painter
 
 import androidx.navigation.NavController
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-
 fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
     val workouts by viewModel.workouts.collectAsState()
+    val todaysWorkout = viewModel.getWorkoutForToday()
+    val caloriesBurnt = viewModel.getCaloriesForCurrentWeek()
+    val (workoutsCompleted, totalWorkouts) = viewModel.getWeekWorkoutStats()
 
     Box(
         modifier = modifier
@@ -71,6 +77,34 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
+                text = "Today's Plan",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Show today's workout or "Rest Day"
+            if (todaysWorkout != null) {
+                LargeEmptyCard(modifier = Modifier) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(todaysWorkout.name ?: "No Name", style = MaterialTheme.typography.bodyLarge)
+                        Text(todaysWorkout.description ?: "No Description", style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            } else {
+                LargeEmptyCard(modifier = Modifier) {
+                    Text(
+                        text = "Rest Day",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
                 text = "Week Summary",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onBackground
@@ -81,39 +115,10 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Pass dynamic values here for CaloriesCard
-              //  CaloriesCard(title = "Burnt Calories", value = "$caloriesBurnt kcal", modifier = Modifier.weight(1f))
+                CaloriesCard(title = "Burnt Calories", value = "$caloriesBurnt kcal", modifier = Modifier.weight(1f).heightIn(min = 168.dp))
 
                 // Pass dynamic values here for WorkoutsCard
-              //  WorkoutsCard(completed = workoutsCompleted, total = workouts.size, modifier = Modifier.weight(1f))
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Today's Plan",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Show today's workout or "Rest Day"
-//            if (todaysWorkout != null) {
-//                LargeEmptyCard(modifier = Modifier) {
-//                    Column(
-//                        modifier = Modifier.padding(16.dp)
-//                    ) {
-//                        Text(todaysWorkout.name, style = MaterialTheme.typography.bodyLarge)
-//                        Text(todaysWorkout.description, style = MaterialTheme.typography.bodyMedium)
-//                    }
-//                }
-//            } else {
-                LargeEmptyCard(modifier = Modifier) {
-                    Text(
-                        text = "Rest Day",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-               // }
+                WorkoutsCard(completed = workoutsCompleted.toString(), total = totalWorkouts, modifier = Modifier.weight(1f).heightIn(min = 120.dp))
             }
         }
 
@@ -138,7 +143,6 @@ fun CaloriesCard(title: String, value: String, modifier: Modifier = Modifier) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Optional image or icon can be added here for Calories
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = title,
@@ -146,7 +150,7 @@ fun CaloriesCard(title: String, value: String, modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
@@ -179,7 +183,7 @@ fun WorkoutsCard(completed: String, total: Int, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(16.dp))
-            CircularProgressBar(progress = progress) // Use dynamic progress
+            CircularProgressBar(progress = progress, completed,total) // Use dynamic progress
         }
     }
 }
@@ -187,6 +191,8 @@ fun WorkoutsCard(completed: String, total: Int, modifier: Modifier = Modifier) {
 @Composable
 fun CircularProgressBar(
     progress: Float,
+    completed: String,
+    total: Int,
     size: Int = 100,
     strokeWidth: Float = 8f,
     color: Color = MaterialTheme.colorScheme.primary
@@ -209,7 +215,7 @@ fun CircularProgressBar(
             )
         }
         Text(
-            text = "${(progress * 100).toInt()}%", // Display progress percentage
+            text = "$completed / $total", // Display progress percentage
             style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
@@ -229,7 +235,30 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, content: @Composable () -> Uni
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            content() // This allows dynamic content to be injected into the card.
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Top part for the workout name and description
+                content()
+
+                // Bottom part for the "View More" button
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    Button(
+                        onClick = { /* Handle click */ },
+                        // Making the button background transparent
+                    ) {
+                        Text(
+                            text = "View More",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
         }
     }
 }
