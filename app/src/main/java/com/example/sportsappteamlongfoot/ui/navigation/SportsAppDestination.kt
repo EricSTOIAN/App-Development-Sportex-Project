@@ -59,7 +59,8 @@ object Planner : AppDestination {
         PlannerScreen(
             modifier = TODO(),
             viewModel = TODO(),
-            navController = TODO()
+            navController = TODO(),
+            onNavigateToWorkout = TODO()
         )
     }
 }

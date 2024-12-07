@@ -45,7 +45,7 @@ import androidx.compose.foundation.layout.*
 
 @SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved, navController: NavController) {
+fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Unit,viewModel: MyViewModelSimpleSaved, navController: NavController) {
     // Observe the state of workouts from the ViewModel
     val workouts = viewModel.getWeeklyWorkouts()
     val upcomingWorkouts = viewModel.getUpcomingWorkouts()
@@ -142,7 +142,16 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
                     Spacer(modifier = Modifier.width(16.dp))
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
 
+            Button(
+                onClick = onNavigateToWorkout,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(text = "Add Workout")
+            }
             Spacer(modifier = Modifier.height(24.dp))
 
             // Upcoming Workouts Title
@@ -206,6 +215,7 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
 fun PlannerScreenPreview() {
     PlannerScreen(
         modifier = TODO(),
+        onNavigateToWorkout = TODO(),
         viewModel = TODO(),
         navController = TODO()
     )

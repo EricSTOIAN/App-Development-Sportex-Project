@@ -172,7 +172,7 @@ fun ProfileScreen(navController: NavController,
                     .padding(vertical = 8.dp)
             ) {
 
-                Text("Go to Workout Screen")
+                Text("Add Workout")
             }
 
             Button(
