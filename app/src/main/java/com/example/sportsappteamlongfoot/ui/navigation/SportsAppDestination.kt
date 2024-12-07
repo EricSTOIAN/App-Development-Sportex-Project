@@ -19,9 +19,10 @@ object MainMenu : AppDestination {
         get() = TODO("Not yet implemented")
 
     @SuppressLint("NewApi")
-    fun screen(onProfileClick: () -> Unit): @Composable () -> Unit = {
+    fun screen(onProfileClick: () -> Unit, onWorkoutClick: () -> Unit): @Composable () -> Unit = {
         MainScreen(
             onProfileClick = onProfileClick,
+            onWorkoutClick = onWorkoutClick,
             navController = TODO(),
 
             modifier = TODO(),
