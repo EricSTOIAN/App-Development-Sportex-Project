@@ -25,20 +25,17 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+import androidx.compose.ui.graphics.painter.Painter
+
 import androidx.navigation.NavController
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+
 fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
     val workouts by viewModel.workouts.collectAsState()
-    val todaysWorkout = viewModel.getTodaysWorkout()
-    val caloriesBurnt = viewModel.getBurntCaloriesThisWeek()
-    val workoutsCompleted = viewModel.getWorkoutsCompletedThisWeek()
 
-    println("Workouts: $workouts")
-    println("Today's Workout: $todaysWorkout")
-    println("Calories Burnt This Week: $caloriesBurnt")
-    println("Workouts Completed This Week: $workoutsCompleted")
 
     Box(
         modifier = modifier
@@ -85,10 +82,10 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Pass dynamic values here for CaloriesCard
-                CaloriesCard(title = "Burnt Calories", value = "$caloriesBurnt kcal", modifier = Modifier.weight(1f))
+                //  CaloriesCard(title = "Burnt Calories", value = "$caloriesBurnt kcal", modifier = Modifier.weight(1f))
 
                 // Pass dynamic values here for WorkoutsCard
-                WorkoutsCard(completed = workoutsCompleted, total = workouts.size, modifier = Modifier.weight(1f))
+                //  WorkoutsCard(completed = workoutsCompleted, total = workouts.size, modifier = Modifier.weight(1f))
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -101,23 +98,23 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
             Spacer(modifier = Modifier.height(8.dp))
 
             // Show today's workout or "Rest Day"
-            if (todaysWorkout != null) {
-                LargeEmptyCard(modifier = Modifier) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(todaysWorkout.name, style = MaterialTheme.typography.bodyLarge)
-                        Text(todaysWorkout.description, style = MaterialTheme.typography.bodyMedium)
-                    }
-                }
-            } else {
-                LargeEmptyCard(modifier = Modifier) {
-                    Text(
-                        text = "Rest Day",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+//            if (todaysWorkout != null) {
+//                LargeEmptyCard(modifier = Modifier) {
+//                    Column(
+//                        modifier = Modifier.padding(16.dp)
+//                    ) {
+//                        Text(todaysWorkout.name, style = MaterialTheme.typography.bodyLarge)
+//                        Text(todaysWorkout.description, style = MaterialTheme.typography.bodyMedium)
+//                    }
+//                }
+//            } else {
+            LargeEmptyCard(modifier = Modifier) {
+                Text(
+                    text = "Rest Day",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                // }
             }
         }
 
