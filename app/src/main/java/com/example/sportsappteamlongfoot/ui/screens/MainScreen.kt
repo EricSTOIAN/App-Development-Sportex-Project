@@ -1,8 +1,8 @@
 package com.example.sportsappteamlongfoot.ui
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -13,85 +13,96 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
-    Column(
+fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit) {
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
-        // Welcome Header with Profile Icon
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        // Main content goes here (everything above the bottom bar)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 70.dp) // Add padding to avoid overlap with BottomBar
         ) {
+            // Welcome Header with Profile Icon
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Welcome, User",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile Icon",
+                    tint = Color.Gray,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .clickable { onProfileClick() } // Navigate to Profile when clicked
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Week Summary Header and Cards
             Text(
-                text = "Welcome, User",
-                style = MaterialTheme.typography.headlineMedium,
+                text = "Week Summary",
+                style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Profile Icon",
-                tint = Color.Gray,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CaloriesCard(title = "Burnt Calories", value = "", modifier = Modifier.weight(1f))
+                WorkoutsCard(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Today's Plan Header and Card
+            Text(
+                text = "Today's Plan",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            LargeEmptyCard()
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Goal Header and Card
+            Text(
+                text = "Goals",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            LargeEmptyCard()
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Week Summary Header and Cards
-        Text(
-            text = "Week Summary",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            CaloriesCard(title = "Burnt Calories", value = "", modifier = Modifier.weight(1f))
-            WorkoutsCard(modifier = Modifier.weight(1f))
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Today's Plan Header and Card
-        Text(
-            text = "Today's Plan",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        LargeEmptyCard()
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Goal Header and Card
-        Text(
-            text = "Goals",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        LargeEmptyCard()
+        // Bottom Bar positioned at the bottom
+        BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
@@ -214,8 +225,8 @@ fun CircularProgressBar(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    MainScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MainScreenPreview() {
+//    MainScreen()
+//}
