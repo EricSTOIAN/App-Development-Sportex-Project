@@ -33,12 +33,15 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     private val _weight = MutableStateFlow("")
     val weight: StateFlow<String> = _weight
+
+
     /* Method called when ViewModel is first created */
     init {
         viewModelScope.launch {
             dataStoreManager.firstNameFlow.collect { _firstName.value = it }
             dataStoreManager.lastNameFlow.collect { _lastName.value = it }
             dataStoreManager.ageFlow.collect { _age.value = it }
+
         }
         // Start collecting the data from the data store when the ViewModel is created.
         loadSettings()
@@ -76,6 +79,8 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             dataStoreManager.saveWeight(weight)
         }
     }
+
+
     private fun loadSettings() {
         viewModelScope.launch {
             dataStoreManager.usernameFlow.collect { username ->

@@ -1,24 +1,45 @@
 package com.example.sportsappteamlongfoot.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
-fun AddWorkoutGoalScreen() {
+fun WorkoutScreen() {
     var name by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    val workoutTypes = listOf("Cardio", "Strength", "Flexibility")
+    val workoutTypes = listOf(
+        "Cardio",
+        "Strength",
+        "Flexibility",
+        "Swimming",
+        "Running",
+        "Cycling",
+        "Yoga",
+        "Pilates",
+        "Hiking",
+        "Rowing",
+        "Dancing",
+        "Boxing",
+        "CrossFit",
+        "Zumba",
+        "Climbing",
+        "High-Intensity Interval Training (HIIT)",
+        "Martial Arts",
+        "Weightlifting",
+        "Stretching",
+        "Jump Rope",
+        "Walking",
+        "Elliptical Training",
+        "Spin Class"
+    )
 
     Column(
         modifier = Modifier
@@ -28,7 +49,7 @@ fun AddWorkoutGoalScreen() {
     ) {
         // Screen Header
         Text(
-            text = "Adding Workout/Goal",
+            text = "Adding Workout",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -140,6 +161,6 @@ fun DropdownMenuComponent(
 @Preview(showBackground = true)
 @Composable
 fun AddWorkoutGoalScreenPreview() {
-    AddWorkoutGoalScreen()
+    WorkoutScreen()
 }
 

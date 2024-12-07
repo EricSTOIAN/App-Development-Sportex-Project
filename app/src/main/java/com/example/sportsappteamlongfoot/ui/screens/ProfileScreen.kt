@@ -20,12 +20,24 @@ import androidx.compose.ui.unit.sp
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
 @Composable
-fun ProfileScreen(viewModel: MyViewModelSimpleSaved) {
+fun ProfileScreen(
+    viewModel: MyViewModelSimpleSaved,
+    onNavigateToWorkout: () -> Unit,
+    onNavigateToGoal: () -> Unit
+) {
     val firstName by viewModel.firstName.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val age by viewModel.age.collectAsState()
     val weight by viewModel.weight.collectAsState()
     val height by viewModel.height.collectAsState()
+
+    var isEditing by remember { mutableStateOf(false) }
+    var newFirstName by remember { mutableStateOf(firstName) }
+    var newLastName by remember { mutableStateOf(lastName) }
+    var newAge by remember { mutableStateOf(age) }
+    var newWeight by remember { mutableStateOf(weight) }
+    var newHeight by remember { mutableStateOf(height) }
+    var newGoals by remember { mutableStateOf(List(6) { "Goal ${it + 1}" }) }
 
     Column(
         modifier = Modifier
@@ -68,10 +80,39 @@ fun ProfileScreen(viewModel: MyViewModelSimpleSaved) {
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ProfileRow(label = "Name", value = "$firstName $lastName")
-                ProfileRow(label = "Age", value = age)
-                ProfileRow(label = "Weight", value = weight)
-                ProfileRow(label = "Height", value = height)
+                if (isEditing) {
+                    OutlinedTextField(
+                        value = newFirstName,
+                        onValueChange = { newFirstName = it },
+                        label = { Text("First Name") }
+                    )
+                    OutlinedTextField(
+                        value = newLastName,
+                        onValueChange = { newLastName = it },
+                        label = { Text("Last Name") }
+                    )
+                    OutlinedTextField(
+                        value = newAge,
+                        onValueChange = { newAge = it },
+                        label = { Text("Age") },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    )
+                    OutlinedTextField(
+                        value = newWeight,
+                        onValueChange = { newWeight = it },
+                        label = { Text("Weight") }
+                    )
+                    OutlinedTextField(
+                        value = newHeight,
+                        onValueChange = { newHeight = it },
+                        label = { Text("Height") }
+                    )
+                } else {
+                    ProfileRow(label = "Name", value = "$firstName $lastName")
+                    ProfileRow(label = "Age", value = age)
+                    ProfileRow(label = "Weight", value = weight)
+                    ProfileRow(label = "Height", value = height)
+                }
             }
         }
 
@@ -82,12 +123,86 @@ fun ProfileScreen(viewModel: MyViewModelSimpleSaved) {
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        GridSection()
+        GridSection(newGoals, isEditing) { index, updatedGoal ->
+            newGoals = newGoals.toMutableList().apply { this[index] = updatedGoal }
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
+        // Edit and Save Buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            if (isEditing) {
+                Button(onClick = {
+                    viewModel.saveFirstName(newFirstName)
+                    viewModel.saveLastName(newLastName)
+                    viewModel.saveAge(newAge)
+                    viewModel.saveWeight(newWeight)
+                    viewModel.saveHeight(newHeight)
+                    // Save goals logic if required
+                    isEditing = false
+                }) {
+                    Text("Save")
+                }
+            } else {
+                Button(onClick = { isEditing = true }) {
+                    Text("Edit")
+                }
+            }
+        }
+        // Buttons to Navigate
+        Button(
+            onClick = onNavigateToWorkout,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text("Go to Workout Screen")
+        }
+
+        Button(
+            onClick = onNavigateToGoal,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text("Go to Goal Screen")
+        }
+
         // Bottom Navigation Bar
         BottomNavigationBar()
+    }
+}
+
+@Composable
+fun GridSection(goals: List<String>, isEditing: Boolean, onGoalChange: (Int, String) -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        for (rowItems in goals.chunked(3)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                for ((index, goal) in rowItems.withIndex()) {
+                    if (isEditing) {
+                        OutlinedTextField(
+                            value = goal,
+                            onValueChange = { onGoalChange(index, it) },
+                            label = { Text("Goal") },
+                            modifier = Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                        )
+                    } else {
+                        AchievementCard(title = goal)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -101,27 +216,6 @@ fun ProfileRow(label: String, value: String) {
         Text(text = value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
     }
 }
-
-@Composable
-fun GridSection() {
-    val items = List(6) { " " } // Placeholder items
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        for (rowItems in items.chunked(3)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                for (item in rowItems) {
-                    AchievementCard(title = item)
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun AchievementCard(title: String) {
     Card(
