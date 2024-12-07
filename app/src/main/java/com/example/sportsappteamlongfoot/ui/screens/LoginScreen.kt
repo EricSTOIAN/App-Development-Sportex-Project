@@ -1,14 +1,11 @@
-package com.example.sportsappteamlongfoot.ui
-
+package com.example.sportsappteamlongfoot.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,14 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
 @Composable
-fun RegisterScreen(onNavigateToLogin: () -> Unit, modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved) {
+fun LoginScreen(
+    onNavigateToRegister: () -> Unit,
+    onNavigateToMenu: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MyViewModelSimpleSaved // Inject ViewModel here
+) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -35,7 +35,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, modifier: Modifier = Modifier,
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Register",
+            text = "Login",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -44,46 +44,32 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, modifier: Modifier = Modifier,
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username" , color = Color(0xFF1A1E25)) },
+            label = { Text("Username", color = Color(0xFF1A1E25)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
 
         )
+
         Spacer(modifier = Modifier.height(8.dp))
-
-
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password", color = Color(0xFF1A1E25)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password" , color = Color(0xFF1A1E25)) },
+            label = { Text("Password" , color = Color(0xFF1A1E25)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { viewModel.saveUsername(username)
-                            viewModel.savePassword(password)
-                            }) {
-            Text(text = "Register")
+        Button(onClick = { var canLogin = viewModel.checkLogin(username, password)
+                            if(canLogin){
+                                onNavigateToMenu() //screen change to the main menu screen
+                            }}) {
+            Text(text = "Login")
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onNavigateToLogin) {
-            Text(text = "Already have an account? Login")
+        Button(onClick = onNavigateToRegister) {
+            Text(text = "Don't have an account? Register")
         }
-
-        Text(text = viewModel.username.collectAsState().value)
-        //Text(text = viewModel.username.collectAsState().value)
     }
 }
