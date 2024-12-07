@@ -1,4 +1,6 @@
 package com.example.sportsappteamlongfoot.ui.screens
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -16,6 +18,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
