@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui.navigation
 
+
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -19,6 +20,7 @@ import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
 // Define a CompositionLocal for accessing NavController anywhere in the composable hierarchy
 val LocalNavController = compositionLocalOf<NavHostController> {
     error("No NavController found!")
+
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
