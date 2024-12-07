@@ -36,11 +36,12 @@ import androidx.navigation.NavController
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, onWorkoutClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
+fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, onWorkoutClick: () -> Unit, onGoalClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
     val workouts by viewModel.workouts.collectAsState()
     val todaysWorkout = viewModel.getWorkoutForToday()
     val caloriesBurnt = viewModel.getCaloriesForCurrentWeek()
     val (workoutsCompleted, totalWorkouts) = viewModel.getWeekWorkoutStats()
+    val weeklyGoals = viewModel.getGoalsForCurrentWeek()
 
     Box(
         modifier = modifier
@@ -118,6 +119,39 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
 
                 // Pass dynamic values here for WorkoutsCard
                 WorkoutsCard(completed = workoutsCompleted.toString(), total = totalWorkouts, modifier = Modifier.weight(1f).heightIn(min = 120.dp))
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = "Goals for the Week",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if(weeklyGoals!=null){
+                    weeklyGoals.forEach { goal ->
+                        LargeEmptyCardGoal(modifier = Modifier, onGoalClick) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(goal.name ?: "No Name", style = MaterialTheme.typography.bodyLarge)
+                            }
+                        }
+                    }
+                } else {
+                    LargeEmptyCardGoal(modifier = Modifier, onWorkoutClick) {
+                        Text(
+                            text = "No goals for the week!",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
             }
         }
 
@@ -248,6 +282,46 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, co
                 ) {
                     Button(
                         onClick = { onWorkoutClick() },
+                        // Making the button background transparent
+                    ) {
+                        Text(
+                            text="View More",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LargeEmptyCardGoal(modifier: Modifier = Modifier, onGoalClick: () -> Unit, content: @Composable () -> Unit) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Top part for the workout name and description
+                content()
+
+                // Bottom part for the "View More" button
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    Button(
+                        onClick = { onGoalClick() },
                         // Making the button background transparent
                     ) {
                         Text(

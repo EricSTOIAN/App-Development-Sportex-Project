@@ -323,4 +323,17 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             .sortedBy { LocalDate.parse(it.date) }
     }
 
+    fun getGoalsForCurrentWeek(): List<Goal> {
+        val today = LocalDate.now()
+        val weekFields = WeekFields.of(Locale.getDefault())
+        val weekStart = today.with(weekFields.dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+        val weekEnd = today.with(weekFields.dayOfWeek(), DayOfWeek.SUNDAY.value.toLong())
+
+        return _goals.value.filter {
+            val goalDate = LocalDate.parse(it.date)
+            !goalDate.isBefore(weekStart) && !goalDate.isAfter(weekEnd)
+        }
+    }
+
+
 }

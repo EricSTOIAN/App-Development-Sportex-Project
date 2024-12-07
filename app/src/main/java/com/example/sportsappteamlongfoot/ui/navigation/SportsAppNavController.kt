@@ -52,6 +52,9 @@ fun AppNavHost(
                     onWorkoutClick = {
                         navController.navigate("workout_details_screen")
                     },
+                    onGoalClick = {
+                        navController.navigate("workout_details_screen")
+                    },
                     viewModel = viewModel
 
                 )
