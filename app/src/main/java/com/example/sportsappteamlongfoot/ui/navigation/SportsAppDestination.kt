@@ -20,7 +20,10 @@ object MainMenu : AppDestination {
         MainScreen(
             onProfileClick = onProfileClick,
             navController = TODO(),
-            modifier = TODO()
+
+            modifier = TODO(),
+            viewModel = TODO()
+
         )
     }
 }

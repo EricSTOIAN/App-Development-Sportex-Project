@@ -1,18 +1,24 @@
 package com.example.sportsappteamlongfoot.ui
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsappteamlongfoot.data.DataStoreManager
+import com.example.sportsappteamlongfoot.data.RepositoryWorkout
+import com.example.sportsappteamlongfoot.data.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     // private UI state (MutableStateFlow)
     private val dataStoreManager = DataStoreManager(context)
-
+    private val repositoryWorkout = RepositoryWorkout(context)
     private val _firstName = MutableStateFlow("")
     val firstName: StateFlow<String> = _firstName
 
@@ -37,14 +43,17 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     /* Method called when ViewModel is first created */
     init {
+        loadSettings()
+        //()
+        loadTestWorkouts()  // Ensure workouts are loaded when the ViewModel is initialized
         viewModelScope.launch {
             dataStoreManager.firstNameFlow.collect { _firstName.value = it }
             dataStoreManager.lastNameFlow.collect { _lastName.value = it }
             dataStoreManager.ageFlow.collect { _age.value = it }
 
         }
-        // Start collecting the data from the data store when the ViewModel is created.
-        loadSettings()
+
+
     }
 
     fun saveFirstName(firstName: String) {
@@ -126,4 +135,83 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         return false
     }
 
+    // Fetch workouts from DataStore
+    private val _workouts = MutableStateFlow<List<Workout>>(emptyList())
+    val workouts: StateFlow<List<Workout>> = _workouts
+
+    // Fetch today's workout
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTodaysWorkout(): Workout? {
+        val today = LocalDate.now().toString()
+        return _workouts.value.firstOrNull { it.date == today }
+    }
+
+    // Calculate burnt calories for the week (for completed workouts)
+    fun getBurntCaloriesThisWeek(): Int {
+        return _workouts.value.filter { it.isCompleted }.sumOf { it.burntCalories }
+    }
+
+    // Get completed workouts for the week
+    fun getWorkoutsCompletedThisWeek(): String {
+        val totalWorkouts = _workouts.value.size
+        val completedWorkouts = _workouts.value.count { it.isCompleted }
+        return "$completedWorkouts/$totalWorkouts"
+    }
+
+    // Load workouts data from DataStore
+    fun loadWorkouts() {
+        viewModelScope.launch {
+            repositoryWorkout.getWorkouts().collect { workouts ->
+                _workouts.value = workouts
+            }
+        }
+    }
+
+    // Save a new workout (or update existing ones)
+    fun saveWorkout(workout: Workout) {
+        val updatedWorkouts = _workouts.value.toMutableList().apply {
+            add(workout)
+        }
+        viewModelScope.launch {
+            repositoryWorkout.saveWorkouts(updatedWorkouts)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadTestWorkouts() {
+        val today = LocalDate.now().toString()
+
+        // Workout 1: Completed workout
+        val completedWorkout = Workout(
+            name = "Completed Workout",
+            type = "Cardio",
+            date = today,
+            description = "Morning cardio workout",
+            burntCalories = 250,
+            isCompleted = true
+        )
+
+        // Workout 2: Not completed workout, set to today's date
+        val notCompletedWorkout = Workout(
+            name = "Not Completed Workout",
+            type = "Strength",
+            date = today,
+            description = "Strength training workout",
+            burntCalories = 250,
+            isCompleted = false
+        )
+
+        // Load both workouts into the list
+        _workouts.value = listOf(completedWorkout, notCompletedWorkout)
+
+        // Optionally, save the workouts to DataStore for persistence
+        viewModelScope.launch {
+            try {
+                repositoryWorkout.saveWorkouts(_workouts.value)
+            } catch (e: Exception) {
+                // Log or handle the exception accordingly
+                e.printStackTrace()
+            }
+        }
+    }
 }

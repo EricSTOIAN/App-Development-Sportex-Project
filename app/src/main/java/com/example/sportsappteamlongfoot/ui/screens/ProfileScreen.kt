@@ -54,6 +54,7 @@ fun ProfileScreen(navController: NavController,
         ) {
             // Header Section
             Row(
+
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
@@ -80,6 +81,7 @@ fun ProfileScreen(navController: NavController,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
+
                 shape = RoundedCornerShape(8.dp),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
@@ -140,6 +142,7 @@ fun ProfileScreen(navController: NavController,
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
+
             ) {
                 if (isEditing) {
                     Button(onClick = {
@@ -166,6 +169,7 @@ fun ProfileScreen(navController: NavController,
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             ) {
+
                 Text("Go to Workout Screen")
             }
 
@@ -246,5 +250,4 @@ fun AchievementCard(title: String) {
         }
     }
 }
-
 

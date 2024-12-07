@@ -1,6 +1,8 @@
 package com.example.sportsappteamlongfoot.ui.navigation
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
@@ -24,6 +26,7 @@ val LocalNavController = compositionLocalOf<NavHostController> {
     error("No NavController found!")
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun AppNavHost(
@@ -42,7 +45,10 @@ fun AppNavHost(
                     navController = navController,  // Pass navController here
                     onProfileClick = {
                         navController.navigate(Profile.route)
-                    }
+
+                    },
+                    viewModel = viewModel
+
                 )
             }
             composable(route = Register.route) {
@@ -73,12 +79,16 @@ fun AppNavHost(
                     onNavigateToGoal = { navController.navigate("goal_screen") }
                 )
             }
+
             composable(route = "workout_screen") {
                 WorkoutScreen(navController = navController)
             }
             composable(route = "goal_screen") {
-                GoalScreen( navController = navController)
+
+                GoalScreen(navController = navController)
+
             }
         }
     }
 }
+

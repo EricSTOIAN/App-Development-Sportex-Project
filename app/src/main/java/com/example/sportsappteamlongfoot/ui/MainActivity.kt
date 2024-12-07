@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,10 +24,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             val context = LocalContext.current
             val viewModel = remember { MyViewModelSimpleSaved(context) }
             val navController = rememberNavController() // Create NavController
             AppNavHost(navController = navController, modifier = Modifier, viewModel = viewModel) // Pass NavController to AppNavHost
+
         }
     }
 }

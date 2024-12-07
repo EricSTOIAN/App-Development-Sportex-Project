@@ -80,6 +80,8 @@ dependencies {
 
     // add the dependency for the Google AI client SDK for Android
     //implementation(libs.google.generativeai)
+    implementation(libs.gson)
+
     implementation(libs.androidx.datastore.preferences)
 
 }
