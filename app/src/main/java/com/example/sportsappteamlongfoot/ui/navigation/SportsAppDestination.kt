@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.sportsappteamlongfoot.ui.MainScreen
 import com.example.sportsappteamlongfoot.ui.screens.LoginScreen
+import com.example.sportsappteamlongfoot.ui.screens.PlannerScreen
 import com.example.sportsappteamlongfoot.ui.screens.RegisterScreen
 interface AppDestination {
     val route: String
@@ -46,6 +47,16 @@ object Login : AppDestination {
     override val screen: @Composable () -> Unit = {
         LoginScreen(onNavigateToRegister = { /* Navigate to Register */ },
             onNavigateToMenu = { /* Navigate to MainMenu */ },
+            modifier = TODO(),
+            viewModel = TODO()
+        )
+    }
+}
+
+object Planner : AppDestination {
+    override val route = "planner"
+    override val screen: @Composable () -> Unit = {
+        PlannerScreen(
             modifier = TODO(),
             viewModel = TODO()
         )

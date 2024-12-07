@@ -232,8 +232,22 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         return Pair(completedWorkouts, totalWorkouts)
     }
 
+
+
     fun getAllWorkouts(): StateFlow<List<Workout>> = _workouts
 
+    fun getWeeklyWorkouts(): List<Workout> {
+        // Determine the start of the current week (Monday)
+        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+
+        // Filter the workouts to include only those in the current week
+        val weeklyWorkouts = _workouts.value.filter {
+            it.date != null && LocalDate.parse(it.date).isAfter(currentWeekStart.minusDays(1)) &&
+                    LocalDate.parse(it.date).isBefore(currentWeekStart.plusWeeks(1))
+        }
+        println("weekly"+weeklyWorkouts)
+        return weeklyWorkouts
+    }
 
 
 }

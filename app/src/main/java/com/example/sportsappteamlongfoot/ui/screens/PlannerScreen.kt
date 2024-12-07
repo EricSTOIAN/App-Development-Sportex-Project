@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,98 +20,88 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import com.example.sportsappteamlongfoot.data.Workout
+import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.WeekFields
+import java.util.Locale
 
+@SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun PlannerScreen(modifier: Modifier = Modifier) {
-      Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp)
-            ) {
-        // Header with Page Title and Profile Icon
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSaved) {
+    // Observe the state of workouts from the ViewModel
+    val workouts = viewModel.getWeeklyWorkouts()
+
+    // Calculate the start of the current week
+    val weekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+
+    // Prepare data to be displayed
+    val weeklyWorkouts = mutableListOf<Pair<DayOfWeek, List<Workout>>>()
+    DayOfWeek.values().forEach { dayOfWeek ->
+        val dayDate = weekStart.plusDays(dayOfWeek.ordinal.toLong())
+        val dayWorkouts = workouts.filter { LocalDate.parse(it.date).dayOfWeek == dayOfWeek }
+        weeklyWorkouts.add(Pair(dayOfWeek, dayWorkouts))
+    }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Weekly Planner",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        LazyRow(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(
-                text = "Planner",  // Page Title
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Icon(
-                imageVector = Icons.Default.AccountCircle, // Profile icon
-                contentDescription = "Profile Icon",
-                tint = Color.Gray,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
+            items(weeklyWorkouts) { (dayOfWeek, dayWorkouts) ->
+                PlannerDaySection(dayOfWeek, dayWorkouts)
+                Spacer(modifier = Modifier.width(16.dp)) // Add spacing between days
+            }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Weekly Calendar with Time Graph
-        WeeklyCalendar(modifier = Modifier.fillMaxWidth())
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Button to add a workout
-        AddWorkoutButton(modifier = Modifier.fillMaxWidth())
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Upcoming Workouts Carousel
-        UpcomingWorkoutsCarousel(modifier = Modifier.fillMaxWidth())
     }
 }
 
 @Composable
-fun WeeklyCalendar(modifier: Modifier = Modifier) {
+fun PlannerDaySection(dayOfWeek: DayOfWeek, workouts: List<Workout>) {
     Card(
-        modifier = modifier.padding(horizontal = 4.dp),
+        modifier = Modifier
+            .width(100.dp)
+            .padding(horizontal = 8.dp)
+            .background(MaterialTheme.colorScheme.primary),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .height(120.dp) // Adjust height as necessary
         ) {
-            // Weekdays
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-                weekdays.forEach { day ->
-                    Text(
-                        text = day,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Time Graph
-            Canvas(modifier = Modifier.fillMaxWidth().height(120.dp)) {
-                drawLine(
-                    color = Color.Blue,  // Blue line in the center
-                    strokeWidth = 4f,
-                    start = Offset(0f, size.height / 2),
-                    end = Offset(size.width, size.height / 2)
+            Text(
+                text = dayOfWeek.toString().substring(0, 3),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            workouts.forEach { workout ->
+                Text(
+                    text = workout.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White
                 )
             }
         }
@@ -118,75 +109,12 @@ fun WeeklyCalendar(modifier: Modifier = Modifier) {
 }
 
 
-@Composable
-fun AddWorkoutButton(modifier: Modifier = Modifier) {
-    Button(
-        onClick = { /* Handle workout addition logic */ },
-        modifier = modifier
-            .padding(horizontal = 4.dp)
-            .size(120.dp, 48.dp)  // Adjust size to make it smaller
-            .clip(MaterialTheme.shapes.small)  // You can adjust the shape here
-    ) {
-        Text(
-            text = "Add Workout",
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.White
-        )
-    }
-}
-
-@Composable
-fun UpcomingWorkoutsCarousel(modifier: Modifier = Modifier) {
-    val scrollState = rememberScrollState()
-
-    Column(
-        modifier = modifier
-            .padding(8.dp)
-            .horizontalScroll(scrollState)
-    ) {
-        Text(
-            text = "Upcoming Workouts",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // This is a placeholder for the carousel of upcoming workouts
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            UpcomingWorkoutCard()
-            UpcomingWorkoutCard()
-            UpcomingWorkoutCard()
-        }
-    }
-}
-
-@Composable
-fun UpcomingWorkoutCard(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .size(150.dp, 100.dp),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Workout",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun PlannerScreenPreview() {
-    PlannerScreen()
+    PlannerScreen(
+        modifier = TODO(),
+        viewModel = TODO()
+    )
 }
 
