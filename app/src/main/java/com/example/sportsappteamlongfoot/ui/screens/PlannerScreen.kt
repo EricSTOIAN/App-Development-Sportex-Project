@@ -50,16 +50,25 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
 
     // Prepare data to be displayed
     val weeklyWorkouts = mutableListOf<Pair<DayOfWeek, List<Workout>>>()
-    DayOfWeek.values().forEach { dayOfWeek ->
-        val dayDate = weekStart.plusDays(dayOfWeek.ordinal.toLong())
+    DayOfWeek.values().forEachIndexed { index, dayOfWeek ->
+        val dayDate = weekStart.plusDays(index.toLong())
         val dayWorkouts = workouts.filter { LocalDate.parse(it.date).dayOfWeek == dayOfWeek }
         weeklyWorkouts.add(Pair(dayOfWeek, dayWorkouts))
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
+        // Display the starting date of the week at the top
         Text(
-            text = "Weekly Planner",
+            text = "Planner",
             style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp)) // Add spacing between titles
+
+        Text(
+            text = "Week of ${weekStart.month} ${weekStart.dayOfMonth}",
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -67,54 +76,64 @@ fun PlannerScreen(modifier: Modifier = Modifier, viewModel: MyViewModelSimpleSav
             modifier = Modifier.fillMaxSize()
         ) {
             items(weeklyWorkouts) { (dayOfWeek, dayWorkouts) ->
-                PlannerDaySection(dayOfWeek, dayWorkouts)
+                // Display the day of the week above the card
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text(
+                        text = dayOfWeek.toString().substring(0, 3),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Black,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    // Display the workouts inside cards, change background color based on the presence of workouts
+                    Card(
+                        modifier = Modifier
+                            .background(if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray)
+                            .fillMaxWidth()
+                            .height(120.dp), // Adjust height as necessary
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            if (dayWorkouts.isEmpty()) {
+                                Text(
+                                    text = "No workouts",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White
+                                )
+                            } else {
+                                dayWorkouts.forEach { workout ->
+                                    Text(
+                                        text = workout.name,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.width(16.dp)) // Add spacing between days
             }
         }
     }
 }
 
-@Composable
-fun PlannerDaySection(dayOfWeek: DayOfWeek, workouts: List<Workout>) {
-    Card(
-        modifier = Modifier
-            .width(100.dp)
-            .padding(horizontal = 8.dp)
-            .background(MaterialTheme.colorScheme.primary),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-                .height(120.dp) // Adjust height as necessary
-        ) {
-            Text(
-                text = dayOfWeek.toString().substring(0, 3),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            workouts.forEach { workout ->
-                Text(
-                    text = workout.name,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White
-                )
-            }
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun PlannerScreenPreview() {
     PlannerScreen(
-        modifier = TODO(),
-        viewModel = TODO()
+        modifier = Modifier,
+        viewModel = TODO() // Provide a mock ViewModel here if needed
     )
 }
 
