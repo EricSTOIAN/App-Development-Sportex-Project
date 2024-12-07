@@ -25,10 +25,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+import androidx.compose.ui.graphics.painter.Painter
+
 import androidx.navigation.NavController
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+
 fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
     val workouts by viewModel.workouts.collectAsState()
     val todaysWorkout = viewModel.getTodaysWorkout()
@@ -41,6 +45,7 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
     println("Workouts Completed This Week: $workoutsCompleted")
 
     Box(
+ ProfileScreen
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)

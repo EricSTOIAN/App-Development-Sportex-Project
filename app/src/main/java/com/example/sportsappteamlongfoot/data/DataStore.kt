@@ -8,13 +8,14 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 const val PROFILE_DATASTORE ="profile_datastore"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PROFILE_DATASTORE)
 
-class DataStoreManager (private val context: Context){
+class DataStoreManager (private val context: Context) {
     companion object {
         val PASSWORD = stringPreferencesKey("PASSWORD")
         val USERNAME = stringPreferencesKey("USERNAME")
@@ -37,6 +38,7 @@ class DataStoreManager (private val context: Context){
             preferences[LAST_NAME] = lastName
         }
     }
+
     suspend fun saveAge(age: String) {
         context.dataStore.edit { preferences ->
             preferences[AGE] = age
@@ -64,12 +66,6 @@ class DataStoreManager (private val context: Context){
     suspend fun saveWeight(weight: String) {
         context.dataStore.edit { preferences ->
             preferences[WEIGHT] = weight
-        }
-    }
-
-    suspend fun saveGoal(goal: String) {
-        context.dataStore.edit { preferences ->
-            preferences[GOAL] = goal
         }
     }
 
@@ -106,8 +102,4 @@ class DataStoreManager (private val context: Context){
             preferences[WEIGHT] ?: ""
         }
 
-    val goalFlow: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[GOAL] ?: ""
-        }
 }
