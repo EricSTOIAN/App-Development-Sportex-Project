@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,13 +16,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.sportsappteamlongfoot.data.Goal
-
+import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 
 
 //For debugging purposes
@@ -32,13 +38,15 @@ private val goals: List<Goal> = listOf(
 )
 
 @Composable
-fun GoalDetailsScreen(modifier:Modifier){
+fun GoalDetailsScreen(navController: NavController, viewModel: MyViewModelSimpleSaved){
     val scrollStateBox = rememberScrollState()
     val scrollStateLazyColumnsActiveGoals = rememberScrollState()
     val scrollStateLazyColumnsUpcomingGoals = rememberScrollState()
 
 
-    Box(modifier.background(Color.White)
+    Box(Modifier
+        .fillMaxSize()
+        .background(Color.White)
        ){
         Column(modifier = Modifier.padding(20.dp)){
             Text(text="Goals",
@@ -53,16 +61,18 @@ fun GoalDetailsScreen(modifier:Modifier){
             LazyColumn (modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp)) {
                 items(goals){ goal ->
-                    Column(modifier
+                    Column(modifier =
+                        Modifier
                         .padding(top = 15.dp, bottom = 15.dp)
                         .border(
                             border = BorderStroke(8.dp, Color.LightGray),
                             shape = RoundedCornerShape(16.dp)
                         )){
-                        Column(modifier
+                        Column(modifier =
+                        Modifier
                             .padding(start = 20.dp,top = 25.dp, end= 15.dp,bottom= 20.dp)){
                             Text(text = goal.name)
-                            Text(text = goal.description, modifier.padding(top = 10.dp))
+                            Text(text = goal.description, modifier = Modifier.padding(top = 10.dp))
                         }
                     }
                 }
@@ -78,16 +88,18 @@ fun GoalDetailsScreen(modifier:Modifier){
             ) {
 
                 items(goals){ goal ->
-                    Column(modifier
+                    Column(modifier =
+                    Modifier
                         .padding(top = 15.dp, bottom = 15.dp)
                         .border(
                             border = BorderStroke(8.dp, Color.LightGray),
                             shape = RoundedCornerShape(16.dp)
                         )){
-                        Column(modifier
+                        Column(modifier =
+                        Modifier
                             .padding(start = 20.dp,top = 25.dp, end= 15.dp,bottom= 20.dp)){
                             Text(text = goal.name)
-                            Text(text = goal.description, modifier.padding(top = 10.dp))
+                            Text(text = goal.description, modifier = Modifier.padding(top = 10.dp))
                         }
                     }
                 }
@@ -96,8 +108,12 @@ fun GoalDetailsScreen(modifier:Modifier){
     }
 }
 
+@SuppressLint("NewApi")
 @Preview
 @Composable
 fun GoalDetailsPreview(){
-    GoalDetailsScreen(Modifier.fillMaxSize())
+    val mockContext = LocalContext.current
+    val mockViewModel = remember {MyViewModelSimpleSaved(mockContext)}
+    val mockNavController = rememberNavController()
+    GoalDetailsScreen(mockNavController,mockViewModel)
 }
