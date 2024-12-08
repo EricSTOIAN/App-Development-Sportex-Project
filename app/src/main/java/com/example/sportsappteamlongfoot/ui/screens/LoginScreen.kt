@@ -82,7 +82,7 @@ fun LoginScreen(
             Text(text = "Login")
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onNavigateToRegister) {
+        Button(shape = RoundedCornerShape(8.dp),onClick = onNavigateToRegister) {
             Text(text = "Don't have an account? Register")
         }
     }

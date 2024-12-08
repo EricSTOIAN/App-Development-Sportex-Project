@@ -114,13 +114,13 @@ fun AIChatBox(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
         ) {
-            Button(
+            Button(shape = RoundedCornerShape(8.dp),
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.weight(1f).padding(end = 8.dp)
             ) {
                 Text("Back")
             }
-            Button(
+            Button(shape = RoundedCornerShape(8.dp),
                 onClick = {
                     aiResponseInUI = ""
                     btnIsEnabled = false
