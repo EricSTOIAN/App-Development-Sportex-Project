@@ -118,7 +118,7 @@ fun GoalScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) 
                 Text(text = "Cancel")
             }
             Button(onClick = {
-                val goal = Goal(name=name,date=date,description=description)
+                val goal = Goal(name=name,date=date,description=description,isCompleted = false)
                 viewModel.addGoal(goal) // Save goal to DataStore
                 isSnackbarVisible = true
             }) {

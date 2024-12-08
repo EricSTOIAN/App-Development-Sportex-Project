@@ -27,13 +27,16 @@ object MainMenu : AppDestination {
 
             modifier = TODO(),
             viewModel = TODO(),
+
             onGoalDetailsClick = onGoalDetailsClick
+
         )
     }
 }
 
 object Register : AppDestination {
     override val route = "register"
+    @SuppressLint("NewApi")
     override val screen: @Composable () -> Unit = {
         RegisterScreen(
             onNavigateToLogin = { /* Navigate to Login */ }, modifier = Modifier,
@@ -45,6 +48,7 @@ object Register : AppDestination {
 
 object Login : AppDestination {
     override val route = "login"
+    @SuppressLint("NewApi")
     override val screen: @Composable () -> Unit = {
         LoginScreen(onNavigateToRegister = { /* Navigate to Register */ },
             onNavigateToMenu = { /* Navigate to MainMenu */ },

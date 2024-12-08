@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.WeekFields
+import java.time.temporal.WeekFields.*
 import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -83,7 +84,8 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             if (existingWorkouts.isNullOrEmpty()) {
                 val initialWorkouts = listOf(
                     Workout(name = "workout1", description = "test 1", date = LocalDate.now().toString(), type = "Morning Run", burntCalories = 250),
-                    Workout(name = "workout2", description = "test 2", date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
+                    Workout(name = "workout2", description = "test 2", date = LocalDate.now().plusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true),
+                    Workout(name = "workout3", description = "test 3", date = LocalDate.now().minusDays(2).toString(), type = "Evening Yoga", burntCalories = 250, isCompleted = true)
                 )
                 _workouts.value = initialWorkouts
                 saveWorkouts(initialWorkouts)
@@ -273,7 +275,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
     }
 
     fun getCaloriesForCurrentWeek(): Int {
-        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+        val currentWeekStart = LocalDate.now().with(of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
         return _workouts.value
             .filter { it.isCompleted }
             .filter { LocalDate.parse(it.date).isAfter(currentWeekStart.minusDays(1)) && LocalDate.parse(it.date).isBefore(currentWeekStart.plusWeeks(1)) }
@@ -282,7 +284,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     fun getWeekWorkoutStats(): Pair<Int, Int> {
         // Current week start
-        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+        val currentWeekStart = LocalDate.now().with(of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
 
         // Total workouts within the current week
         val totalWorkouts = _workouts.value.count {
@@ -305,7 +307,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     fun getWeeklyWorkouts(): List<Workout> {
         // Determine the start of the current week (Monday)
-        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+        val currentWeekStart = LocalDate.now().with(of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
 
         // Filter the workouts to include only those in the current week
         val weeklyWorkouts = _workouts.value.filter {
@@ -318,7 +320,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     fun getWeeklyGoals(): List<Goal> {
         // Determine the start of the current week (Monday)
-        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+        val currentWeekStart = LocalDate.now().with(of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
 
         // Filter the workouts to include only those in the current week
         val weeklyGoals = _goals.value.filter {
@@ -338,4 +340,34 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             .filter { LocalDate.parse(it.date).isAfter(LocalDate.now().minusDays(1)) }
             .sortedBy { LocalDate.parse(it.date) }
     }
+
+
+    fun getGoalsForCurrentWeek(): List<Goal> {
+        val today = LocalDate.now()
+        val weekFields = of(Locale.getDefault())
+        val weekStart = today.with(weekFields.dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+        val weekEnd = today.with(weekFields.dayOfWeek(), DayOfWeek.SUNDAY.value.toLong())
+
+        return _goals.value.filter {
+            val goalDate = LocalDate.parse(it.date)
+            !goalDate.isBefore(weekStart) && !goalDate.isAfter(weekEnd)
+        }
+    }
+    fun getTotalGoalsCompleted(): Int {
+        return _goals.value.count { it.isCompleted }
+    }
+
+    // Function to calculate total completed workouts
+    fun getTotalWorkoutsCompleted(): Int {
+        return _workouts.value.count { it.isCompleted }
+    }
+
+    // Function to calculate total calories burned from completed workouts
+    fun getTotalCaloriesBurned(): Int {
+        return _workouts.value.filter { it.isCompleted }.sumOf { it.burntCalories }
+    }
+
+    // Function to find the most workouts completed in a single week
+
+
 }

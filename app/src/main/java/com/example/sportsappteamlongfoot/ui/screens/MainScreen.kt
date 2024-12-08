@@ -44,10 +44,12 @@ fun MainScreen(
     onGoalDetailsClick: () -> Unit,
     viewModel: MyViewModelSimpleSaved
 ) {
+
     val workouts by viewModel.workouts.collectAsState()
     val todaysWorkout = viewModel.getWorkoutForToday()
     val caloriesBurnt = viewModel.getCaloriesForCurrentWeek()
     val (workoutsCompleted, totalWorkouts) = viewModel.getWeekWorkoutStats()
+    val weeklyGoals = viewModel.getGoalsForCurrentWeek()
 
     Box(
         modifier = modifier
@@ -129,17 +131,37 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Add button to navigate to Goal Details Screen
-            Button(
-                onClick = onGoalDetailsClick, // Navigate to Goal Details Screen
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+            Text(
+                text = "Goals for the Week",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "View Goal Details",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                if(weeklyGoals!=null){
+                    weeklyGoals.forEach { goal ->
+                        LargeEmptyCardGoal(modifier = Modifier, onGoalClick) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(goal.name ?: "No Name", style = MaterialTheme.typography.bodyLarge)
+                            }
+                        }
+                    }
+                } else {
+                    LargeEmptyCardGoal(modifier = Modifier, onWorkoutClick) {
+                        Text(
+                            text = "No goals for the week!",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+
             }
         }
 
@@ -280,6 +302,46 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, co
                         )
                     }
 
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LargeEmptyCardGoal(modifier: Modifier = Modifier, onGoalClick: () -> Unit, content: @Composable () -> Unit) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Top part for the workout name and description
+                content()
+
+                // Bottom part for the "View More" button
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                      Button(
+                onClick = onGoalDetailsClick, // Navigate to Goal Details Screen
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text(
+                    text = "View Goal Details",
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 }
             }
         }

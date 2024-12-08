@@ -41,28 +41,35 @@ import java.time.LocalDate
 import java.time.temporal.WeekFields
 import java.util.Locale
 import androidx.compose.foundation.layout.*
+import com.example.sportsappteamlongfoot.data.Goal
 
 
 @SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  onNavigateToWorkout: () -> Unit,viewModel: MyViewModelSimpleSaved, navController: NavController) {
-    // Observe the state of workouts from the ViewModel
+fun PlannerScreen(
+    modifier: Modifier = Modifier,
+    onNavigateToGoal: () -> Unit,
+    onNavigateToWorkout: () -> Unit,
+    viewModel: MyViewModelSimpleSaved,
+    navController: NavController
+) {
+    // Observe the state of workouts and goals from the ViewModel
     val workouts = viewModel.getWeeklyWorkouts()
-    val upcomingWorkouts = viewModel.getUpcomingWorkouts()
+    val goals = viewModel.getWeeklyGoals()
+    val upcomingWorkouts = viewModel.getUpcomingWorkouts();
     val upcomingGoals = viewModel.getUpcomingGoals()
     // Calculate the start of the current week
     val weekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
-    val goals = viewModel.getWeeklyGoals()
 
-    // Prepare data to be displayed
-    val weeklyWorkouts = mutableListOf<Pair<DayOfWeek, List<Workout>>>()
+    // Merge workouts and goals for each day of the week
+    val weeklyData = mutableListOf<Pair<DayOfWeek, List<Pair<Workout?, Goal?>>>>()
     DayOfWeek.values().forEachIndexed { index, dayOfWeek ->
         val dayDate = weekStart.plusDays(index.toLong())
         val dayWorkouts = workouts.filter { LocalDate.parse(it.date).dayOfWeek == dayOfWeek }
-        weeklyWorkouts.add(Pair(dayOfWeek, dayWorkouts))
+        val dayGoals = goals.filter { LocalDate.parse(it.date).dayOfWeek == dayOfWeek }
+        val combinedData = dayWorkouts.map { Pair(it, null) } + dayGoals.map { Pair(null, it) }
+        weeklyData.add(Pair(dayOfWeek, combinedData))
     }
-
-
 
     Box(
         modifier = modifier
@@ -90,62 +97,72 @@ fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  o
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // Weekly Workouts Carousel
-            LazyRow(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(weeklyWorkouts) { (dayOfWeek, dayWorkouts) ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .width(100.dp)
-                            .padding(horizontal = 8.dp)
-                    ) {
-                        Text(
-                            text = dayOfWeek.toString().substring(0, 3),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-
-                        Card(
+            // Vertical layout for Workouts and Goals
+            Column {
+                // Weekly Data Section (both workouts and goals)
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(weeklyData) { (dayOfWeek, dayData) ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(80.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (dayWorkouts.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray
-                            )
+                                .width(100.dp)
+                                .padding(horizontal = 8.dp)
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.padding(8.dp)
+                            Text(
+                                text = dayOfWeek.toString().substring(0, 3),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Black,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (dayData.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray
+                                )
                             ) {
-                                if (dayWorkouts.isEmpty()) {
-                                    Text(
-                                        text = "No workouts",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Color.White
-                                    )
-                                } else {
-                                    dayWorkouts.forEach { workout ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.padding(8.dp)
+                                ) {
+                                    if (dayData.isEmpty()) {
                                         Text(
-                                            text = workout.name,
+                                            text = "free day!",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = Color.White
                                         )
+                                    } else {
+                                        dayData.forEach { (workout, goal) ->
+                                            workout?.let {
+                                                Text(
+                                                    text = it.name,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = Color.White
+                                                )
+                                            }
+                                            goal?.let {
+                                                Text(
+                                                    text = it.name,
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = Color.White
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-
-
                     }
-
-                    Spacer(modifier = Modifier.width(16.dp))
                 }
             }
+
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
@@ -158,7 +175,7 @@ fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  o
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-        onClick = onNavigateToGoal,
+                onClick = onNavigateToGoal,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -166,6 +183,7 @@ fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  o
                 Text(text = "Add Goal")
             }
             Spacer(modifier = Modifier.height(24.dp))
+
             // Upcoming Workouts Title
             Text(
                 text = "Upcoming Workouts",
@@ -209,16 +227,17 @@ fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  o
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Upcoming Workouts Title
+            // Upcoming Goals Title
             Text(
                 text = "Upcoming Goals",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            // Upcoming Workouts Carousel
+            // Upcoming Goals Carousel
             LazyRow(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -246,7 +265,7 @@ fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  o
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Date: ${goal.date}",
+                                text = "Due: ${goal.date}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -256,27 +275,13 @@ fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  o
             }
         }
 
-        // Bottom Bar
-        BottomBar(
-            navController = navController,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-        )
+        // Bottom Navigation Bar
+        BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun PlannerScreenPreview() {
-    PlannerScreen(
-        modifier = TODO(),
-        onNavigateToWorkout = TODO(),
-        viewModel = TODO(),
-        navController = TODO(),
-        onNavigateToGoal = TODO()
-    )
-}
+
 
 
