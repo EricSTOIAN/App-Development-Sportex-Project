@@ -110,7 +110,17 @@ fun GoalScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) 
             maxLines = 5
         )
         Spacer(modifier = Modifier.height(8.dp))
-
+        // Ask AI Button
+        Button(
+            onClick = {
+                description = "AI-generated suggestion for $selectedType goal" // Simulate AI response
+                navController.navigate("ai_chat_screen");
+            },shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text(text = "Ask AI")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
         // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
