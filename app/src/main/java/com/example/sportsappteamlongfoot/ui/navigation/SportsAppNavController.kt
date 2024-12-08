@@ -42,7 +42,7 @@ fun AppNavHost(
     SportsAppTeamLongFootTheme {
         NavHost(
             navController = navController,
-            startDestination = Login.route,
+            startDestination = "workout_screen",
             modifier = modifier
         ) {
             composable(route = MainMenu.route) {

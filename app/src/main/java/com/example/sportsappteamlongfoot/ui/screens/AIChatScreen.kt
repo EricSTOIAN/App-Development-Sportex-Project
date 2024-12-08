@@ -39,28 +39,41 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.sportsappteamlongfoot.R
+import com.example.sportsappteamlongfoot.data.Goal
+import com.example.sportsappteamlongfoot.data.Workout
 import com.example.sportsappteamlongfoot.model.AIModel
-import com.example.sportsappteamlongfoot.model.Workout
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+////For debugging purposes
+private val sampleGoals: List<Goal> = listOf(
+    Goal("Run 25 km","Preparing for a competition","December 19 2029",),
+    Goal("Bike 50km ","Just for fun","March 2 2021",),
+    Goal("Do 60 Push-Ups","To be stronger","June 7 2027")
+)
 
-private var workoutDatastoreInstance: Workout = Workout("","","","");
+private val sampleWorkout: List<Workout> = listOf(
+    Workout("Run 25 km","Running","December 19 2029","Preparing to run a marathon"),
+    Workout("Bike 50km ","Biking","March 2 2021", "Just for fun"),
+    Workout("Do 60 Push-Ups","Exercises","June 7 2027", "Need to increase muscular strength")
+)
 
 @SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
 fun AIChatBox(navController: NavController, viewModel: MyViewModelSimpleSaved,modifier: Modifier = Modifier.fillMaxWidth()){
-    var userInput by rememberSaveable { mutableStateOf("") }
+    var userInputInUI by rememberSaveable { mutableStateOf("") }
     var aiResponseInUI by rememberSaveable { mutableStateOf("") }
     val aiModel = AIModel()
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var btnIsEnabled by rememberSaveable { mutableStateOf(true) }
     val focusManager = LocalFocusManager.current
-    val goalsData = viewModel.goals.value
-    val workoutData = viewModel.workouts.value
+    val goalsData: List<Goal> = sampleGoals
+    val workoutData: List<Workout> = sampleWorkout
 
+//    val goalsData: List<Goal> = viewModel.goals.value
+//    val workoutData: List<Workout> = viewModel.workouts.value
 
     Box(modifier = modifier
         .verticalScroll(scrollState)
@@ -75,8 +88,8 @@ fun AIChatBox(navController: NavController, viewModel: MyViewModelSimpleSaved,mo
                 fontSize = 30.sp
             )
             TextField(
-                value = userInput,
-                onValueChange = { userInput = it},
+                value = userInputInUI,
+                onValueChange = { userInputInUI = it},
                 textStyle = TextStyle(textAlign = TextAlign.Center),
                 label = {
                     Text(text = "Type anything",
@@ -106,7 +119,51 @@ fun AIChatBox(navController: NavController, viewModel: MyViewModelSimpleSaved,mo
                 btnIsEnabled = false
                 focusManager.clearFocus() //Hides the keyboard
                 coroutineScope.launch{
-                    val response = aiModel.GenerateAIResponse(userInput).toString()
+                    var userInput = userInputInUI;
+                    var response = "";
+
+                    //Feed AI Workout and Goals data if user specifies anything related
+                    if (userInputInUI.contains("workout") && userInputInUI.contains("goal")){
+                        userInput += userInput+"Here are my current workouts"
+
+                        for (item in workoutData){
+                            userInput += userInput +
+                                    "Name: ${item.name}," +
+                                    "Description: ${item.description}," +
+                                    "Date: ${item.date},"+
+                                    "Type: ${item.type}"  +
+                                    "\n"
+                        }
+                        userInput += userInput+"Here are my current goals"
+                        for(item in goalsData){
+                            userInput += "Name: ${item.name}"
+                            "Date: ${item.date}"
+                            "Description: ${item.description}"+
+                                    "\n"
+                        }
+                    }
+                    else if (userInputInUI.contains("workout")){
+                        userInput += "Here are my current workouts"
+                        for (item in workoutData){
+                            userInput += userInput +
+                            "Name: ${item.name}," +
+                            "Description: ${item.description}," +
+                            "Date: ${item.date},"+
+                            "Type: ${item.type}"  +
+                            "\n"
+                        }
+                    }
+                    else if (userInputInUI.contains("goal")){
+                        userInput += "Here are my current goals"
+                        for(item in goalsData){
+                            userInput += "Name: ${item.name}"
+                            "Date: ${item.date}"
+                            "Description: ${item.description}"+
+                            "\n"
+                        }
+                    }
+
+                    response = aiModel.GenerateAIResponse(userInput).toString()
 
                     //Gives typing effect
                     for(i in response.indices){
@@ -169,8 +226,4 @@ fun AIChatBoxPreview(){
     val mockViewModel = remember {MyViewModelSimpleSaved(mockContext)}
     val mockNavController = rememberNavController()
     AIChatBox(mockNavController, mockViewModel, Modifier.fillMaxWidth())
-}
-
-fun setWorkoutInstance(workout: Workout){
-      workoutDatastoreInstance = workout
 }
