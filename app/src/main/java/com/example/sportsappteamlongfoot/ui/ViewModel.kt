@@ -267,6 +267,27 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         saveGoals(updatedGoals)
     }
 
+    fun editWorkout(updatedWorkout: Workout) {
+        val updatedWorkouts = _workouts.value.map {
+            if (it.name == updatedWorkout.name) updatedWorkout else it
+        }
+        _workouts.value = updatedWorkouts
+        saveWorkouts(updatedWorkouts)
+    }
+
+    fun deleteWorkout(workout: Workout) {
+        val updatedWorkout = _workouts.value.toMutableList().apply { remove(workout) }
+        _workouts.value = updatedWorkout
+        saveWorkouts(updatedWorkout)
+    }
+
+    fun completeWorkout(workout: Workout) {
+        val updatedWorkout = _workouts.value.map {
+            if (it.name == workout.name) it.copy(description = "${it.description} (Completed)") else it
+        }
+        _workouts.value = updatedWorkout
+        saveWorkouts(updatedWorkout)
+    }
 
     fun getWorkoutForToday(): Workout? {
        val today = LocalDate.now().toString() // Ensure this matches Workout.date

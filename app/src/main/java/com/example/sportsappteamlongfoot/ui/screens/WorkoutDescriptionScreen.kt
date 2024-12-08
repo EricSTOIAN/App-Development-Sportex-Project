@@ -31,7 +31,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,10 +45,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.sportsappteamlongfoot.data.Goal
 import com.example.sportsappteamlongfoot.data.Workout
 import com.example.sportsappteamlongfoot.ui.BottomBar
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
+import kotlinx.coroutines.flow.count
+import java.time.LocalDate
 
 
 //For debugging purposes
@@ -60,8 +70,13 @@ fun WorkoutDetailsScreen(
     viewModel: MyViewModelSimpleSaved,
     modifier: Modifier = Modifier
 ) {
-    val activeWorkout = viewModel.getWorkoutForToday()
-    val upcomingWorkouts = viewModel.getUpcomingWorkouts()
+    val workoutsState = viewModel.workouts.collectAsState()
+    val activeWorkouts = workoutsState.value.filter {
+        LocalDate.parse(it.date) == LocalDate.now()
+    }
+    val upcomingWorkouts = workoutsState.value.filter {
+        LocalDate.parse(it.date).isAfter(LocalDate.now())
+    }
 
     Box(
         modifier = Modifier
@@ -88,20 +103,11 @@ fun WorkoutDetailsScreen(
                     fontSize = 32.sp,
                     color = Color.Black
                 )
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile Icon",
-                    tint = Color.Gray,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .clickable { onProfileClick() }
-                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Active Workout Section
+            // Active Goals Section
             Text(
                 text = "Active Workout",
                 style = MaterialTheme.typography.headlineSmall,
@@ -109,11 +115,17 @@ fun WorkoutDetailsScreen(
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(8.dp))
-            if (activeWorkout != null) {
-                WorkoutCard(workout = activeWorkout, showCompleteButton = true)
+            if (activeWorkouts.isNotEmpty()) {
+                WorkoutCard(
+                    workout = activeWorkouts.first(),
+                    showButtons = true,
+                    onEditClick = { updatedWorkout -> viewModel.editWorkout(updatedWorkout) },
+                    onDeleteClick = { viewModel.deleteWorkout(activeWorkouts.first()) },
+                    onCompleteClick = { viewModel.completeWorkout(activeWorkouts.first()) }
+                )
             } else {
                 Text(
-                    text = "No active workout for today!",
+                    text = "No active workouts for today!",
                     style = MaterialTheme.typography.bodyMedium,
                     fontSize = 16.sp,
                     color = Color.Gray
@@ -122,7 +134,7 @@ fun WorkoutDetailsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Upcoming Workouts Section
+            // Upcoming Goals Section
             Text(
                 text = "Upcoming Workouts",
                 style = MaterialTheme.typography.headlineSmall,
@@ -132,7 +144,13 @@ fun WorkoutDetailsScreen(
             Spacer(modifier = Modifier.height(8.dp))
             LazyColumn {
                 items(upcomingWorkouts) { workout ->
-                    WorkoutCard(workout = workout, showCompleteButton = false)
+                    WorkoutCard(
+                        workout = workout,
+                        showButtons = true,
+                        onEditClick = { updatedWorkout -> viewModel.editWorkout(updatedWorkout) },
+                        onDeleteClick = { viewModel.deleteWorkout(workout) },
+                        onCompleteClick = { viewModel.completeWorkout(workout) }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -144,7 +162,27 @@ fun WorkoutDetailsScreen(
 }
 
 @Composable
-fun WorkoutCard(workout: Workout, showCompleteButton: Boolean) {
+fun WorkoutCard(
+    workout: Workout,
+    showButtons: Boolean,
+    onDeleteClick: () -> Unit,
+    onCompleteClick: () -> Unit,
+    onEditClick: (Workout) -> Unit
+) {
+    val isCompleted = remember { mutableStateOf(workout.description.contains("(Completed)")) } // Track completion status
+    val showEditDialog = remember { mutableStateOf(false) }
+
+    if (showEditDialog.value) {
+        EditWorkoutDialog(
+            workout = workout,
+            onDismiss = { showEditDialog.value = false },
+            onSave = { updatedWorkout ->
+                onEditClick(updatedWorkout)
+                showEditDialog.value = false
+            }
+        )
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,31 +218,37 @@ fun WorkoutCard(workout: Workout, showCompleteButton: Boolean) {
                 fontSize = 16.sp
             )
 
-            if (showCompleteButton) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { /* Mark workout as completed */ },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Complete")
-                }
-            } else {
+            if (showButtons) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Button(
-                        onClick = { /* Remove workout */ },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        onClick = { showEditDialog.value = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text("Remove", color = Color.White)
+                        Text("Edit", color = Color.White)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
-                        onClick = { /* Start workout */ }
+                        onClick = {
+                            isCompleted.value = true
+                            onCompleteClick()
+                        },
+                        enabled = !isCompleted.value,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isCompleted.value) Color.Green else MaterialTheme.colorScheme.primary
+                        )
                     ) {
-                        Text("Start")
+                        Text(if (isCompleted.value) "Completed" else "Complete")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = { onDeleteClick() }, // Delete
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    ) {
+                        Text("Delete", color = Color.White)
                     }
                 }
             }
@@ -212,9 +256,48 @@ fun WorkoutCard(workout: Workout, showCompleteButton: Boolean) {
     }
 }
 
-//@Preview
-//@Composable
-//fun WorkoutDetailsPreview(){
-//    WorkoutDetailsScreen(Modifier.fillMaxSize())
-//}
+@Composable
+fun EditWorkoutDialog(
+    workout: Workout,
+    onDismiss: () -> Unit,
+    onSave: (Workout) -> Unit
+) {
+    val updatedDescription = remember { mutableStateOf(workout.description) }
+    val updatedDate = remember { mutableStateOf(workout.date) }
+
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Workout") },
+        text = {
+            Column {
+                TextField(
+                    value = updatedDescription.value,
+                    onValueChange = { updatedDescription.value = it },
+                    label = { Text("Description") }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = updatedDate.value,
+                    onValueChange = { updatedDate.value = it },
+                    label = { Text("Date") }
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                onSave(workout.copy(
+                    description = updatedDescription.value,
+                    date = updatedDate.value
+                ))
+            }) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
 
