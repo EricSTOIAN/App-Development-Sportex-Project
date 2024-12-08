@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -145,7 +146,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Register Button
-        Button(onClick = {
+        Button(shape = RoundedCornerShape(8.dp),onClick = {
             viewModel.saveUsername(username)
             viewModel.savePassword(password)
             viewModel.saveFirstName(firstName)
@@ -164,7 +165,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         // Login Navigation Button
-        Button(onClick = onNavigateToLogin) {
+        Button(shape = RoundedCornerShape(8.dp),onClick = onNavigateToLogin) {
             Text(text = "Already have an account? Login")
         }
 

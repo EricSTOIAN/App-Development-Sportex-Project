@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -88,7 +89,7 @@ fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSave
                 showDatePicker(context) { selectedDate ->
                     date = selectedDate
                 }
-            },
+            },shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -115,7 +116,7 @@ fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSave
             onClick = {
                 description = "AI-generated suggestion for $selectedType goal" // Simulate AI response
                 navController.navigate("ai_chat_screen");
-            },
+            },shape = RoundedCornerShape(8.dp),
             modifier = Modifier.align(Alignment.End)
         ) {
             Text(text = "Ask AI")
@@ -127,10 +128,10 @@ fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSave
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = { navController.popBackStack() }) {
+            Button(onClick = { navController.popBackStack() },shape = RoundedCornerShape(8.dp)) {
                 Text(text = "Cancel")
             }
-            Button(onClick = {
+            Button(shape = RoundedCornerShape(8.dp),onClick = {
                 val workout = calories.toIntOrNull()?.let {
                     Workout(
                         name = name,

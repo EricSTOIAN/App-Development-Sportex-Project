@@ -344,16 +344,20 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     fun getWeeklyWorkouts(): List<Workout> {
         // Determine the start of the current week (Monday)
-        val currentWeekStart = LocalDate.now().with(of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+        val currentWeekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
 
-        // Filter the workouts to include only those in the current week
+        // Adjust the end of the week to Sunday
+        val currentWeekEnd = currentWeekStart.plusDays(6)
+
+        // Filter the workouts to include only those in the current week from Monday to Sunday
         val weeklyWorkouts = _workouts.value.filter {
             it.date != null && LocalDate.parse(it.date).isAfter(currentWeekStart.minusDays(1)) &&
-                    LocalDate.parse(it.date).isBefore(currentWeekStart.plusWeeks(1))
+                    LocalDate.parse(it.date).isBefore(currentWeekEnd.plusDays(1))
         }
-        println("weekly"+weeklyWorkouts)
+        println("weekly" + weeklyWorkouts)
         return weeklyWorkouts
     }
+
 
     fun getWeeklyGoals(): List<Goal> {
         // Determine the start of the current week (Monday)

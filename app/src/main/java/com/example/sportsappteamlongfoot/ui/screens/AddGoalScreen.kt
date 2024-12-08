@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -88,7 +89,8 @@ fun GoalScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) 
                     date = selectedDate
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
         ) {
             Text(
                 text = if (date.isEmpty()) "Select Date" else date,
@@ -114,14 +116,14 @@ fun GoalScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) 
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = { navController.popBackStack() }) {
+            Button(onClick = { navController.popBackStack() },shape = RoundedCornerShape(8.dp)) {
                 Text(text = "Cancel")
             }
             Button(onClick = {
                 val goal = Goal(name=name,date=date,description=description,isCompleted = false)
                 viewModel.addGoal(goal) // Save goal to DataStore
                 isSnackbarVisible = true
-            }) {
+            },shape = RoundedCornerShape(8.dp)) {
                 Text(text = "Add")
             }
         }

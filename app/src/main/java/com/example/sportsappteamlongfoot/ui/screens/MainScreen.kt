@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
@@ -291,7 +292,7 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, co
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.BottomEnd
                 ) {
-                    Button(
+                    Button(shape = RoundedCornerShape(8.dp),
                         onClick = { onWorkoutClick() },
                         // Making the button background transparent
                     ) {
@@ -335,7 +336,7 @@ fun LargeEmptyCardGoal(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.BottomEnd
                 ) {
-                    Button(
+                    Button(shape = RoundedCornerShape(8.dp),
                         onClick = onGoalClick
                     ) {
                         Text(
