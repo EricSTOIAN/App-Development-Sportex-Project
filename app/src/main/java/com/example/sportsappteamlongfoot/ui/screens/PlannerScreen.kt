@@ -55,15 +55,12 @@ fun PlannerScreen(
     onWorkoutClick: () -> Unit,
     onGoalDetailsClick: () -> Unit,
 ) {
-    // Observe the state of workouts and goals from the ViewModel
     val workouts = viewModel.getWeeklyWorkouts()
     val goals = viewModel.getWeeklyGoals()
-    val upcomingWorkouts = viewModel.getUpcomingWorkouts();
+    val upcomingWorkouts = viewModel.getUpcomingWorkouts()
     val upcomingGoals = viewModel.getUpcomingGoals()
-    // Calculate the start of the current week
-    val weekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+    val weekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.SUNDAY.value.toLong())
 
-    // Merge workouts and goals for each day of the week
     val weeklyData = mutableListOf<Pair<DayOfWeek, List<Pair<Workout?, Goal?>>>>()
     DayOfWeek.values().forEachIndexed { index, dayOfWeek ->
         val dayDate = weekStart.plusDays(index.toLong())
@@ -74,8 +71,9 @@ fun PlannerScreen(
     }
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background) // Set background
             .padding(16.dp)
     ) {
         Column(
@@ -83,78 +81,75 @@ fun PlannerScreen(
                 .fillMaxSize()
                 .padding(bottom = 70.dp) // Reserve space for BottomBar
         ) {
-            // Title
             Text(
                 text = "Planner",
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            // Display Week Start
             Text(
                 text = "Week of ${weekStart.month} ${weekStart.dayOfMonth}",
                 style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 16.dp),
+                color = MaterialTheme.colorScheme.onBackground
             )
 
-            // Vertical layout for Workouts and Goals
-            Column {
-                // Weekly Data Section (both workouts and goals)
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(weeklyData) { (dayOfWeek, dayData) ->
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .width(100.dp)
-                                .padding(horizontal = 8.dp)
-                        ) {
-                            Text(
-                                text = dayOfWeek.toString().substring(0, 3),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Black,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+            LazyRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(weeklyData) { (dayOfWeek, dayData) ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .width(100.dp)
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        Text(
+                            text = dayOfWeek.toString().substring(0, 3),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground, // Dynamic text color
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
 
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(80.dp),
-                                shape = RoundedCornerShape(8.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (dayData.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Gray
-                                )
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (dayData.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Unspecified
+                            ),
+                            elevation = CardDefaults.cardElevation(4.dp)
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(8.dp)
                             ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.padding(8.dp)
-                                ) {
-                                    if (dayData.isEmpty()) {
-                                        Text(
-                                            text = "free day!",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = Color.White
-                                        )
-                                    } else {
-                                        dayData.forEach { (workout, goal) ->
-                                            workout?.let {
-                                                Text(
-                                                    text = it.name,
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = Color.White
-                                                )
-                                            }
-                                            goal?.let {
-                                                Text(
-                                                    text = it.name,
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = Color.White
-                                                )
-                                            }
+                                if (dayData.isEmpty()) {
+                                    Text(
+                                        text = "free day!",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Black
+                                    )
+                                } else {
+                                    dayData.forEach { (workout, goal) ->
+                                        workout?.let {
+                                            Text(
+                                                text = it.name,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        }
+                                        goal?.let {
+                                            Text(
+                                                text = it.name,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onPrimary
+                                            )
                                         }
                                     }
                                 }
@@ -165,47 +160,48 @@ fun PlannerScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             Button(
-                    onClick = onNavigateToWorkout,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                onClick = onNavigateToWorkout,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+
             ) {
-            Text(text = "Add Workout")
-        }
+                Text(text = "Add Workout")
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Button(
                 onClick = onNavigateToGoal,
+                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
                 Text(text = "Add Goal")
             }
+
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Upcoming Workouts Section
-            Column(
-                modifier = Modifier.padding(vertical = 16.dp)
-            ) {
+            Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 Text(
                     text = "Upcoming Workouts",
                     style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
                     items(upcomingWorkouts) { workout ->
                         Card(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
                                 .size(width = 200.dp, height = 100.dp),
                             shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondary
-                            )
+                            elevation = CardDefaults.cardElevation(4.dp)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -217,21 +213,23 @@ fun PlannerScreen(
                                 Text(
                                     text = workout.name,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.White
+                                    color = Color.Black
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Date: ${workout.date}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black
                                 )
                             }
                         }
                     }
                 }
+
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     onClick = onWorkoutClick,
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
@@ -240,30 +238,22 @@ fun PlannerScreen(
                 }
             }
 
-            //Spacer(modifier = Modifier.height(8.dp))
-
-            // Upcoming Goals Section
-            Column(
-                modifier = Modifier.padding(vertical = 16.dp)
-            ) {
+            Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 Text(
                     text = "Upcoming Goals",
                     style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
                     items(upcomingGoals) { goal ->
                         Card(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
                                 .size(width = 200.dp, height = 100.dp),
                             shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondary
-                            )
+                            elevation = CardDefaults.cardElevation(4.dp)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -275,21 +265,23 @@ fun PlannerScreen(
                                 Text(
                                     text = goal.name,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.White
+                                    color = Color.Black
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = "Due: ${goal.date}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black
                                 )
                             }
                         }
                     }
                 }
+
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
-                    onClick =onGoalDetailsClick,
+                    onClick = onGoalDetailsClick,
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
@@ -299,7 +291,6 @@ fun PlannerScreen(
             }
         }
 
-        // Bottom Navigation Bar
         BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }

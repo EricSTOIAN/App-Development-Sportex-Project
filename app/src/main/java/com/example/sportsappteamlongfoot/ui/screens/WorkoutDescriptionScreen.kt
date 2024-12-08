@@ -217,14 +217,14 @@ fun WorkoutCard(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Button(
+                    Button(shape = RoundedCornerShape(8.dp),
                         onClick = { showEditDialog.value = true },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
                         Text("Edit", color = Color.White)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(
+                    Button(shape = RoundedCornerShape(8.dp),
                         onClick = {
                             isCompleted.value = true
                             onCompleteClick()
@@ -237,7 +237,7 @@ fun WorkoutCard(
                         Text(if (isCompleted.value) "Completed" else "Complete")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Button(
+                    Button(shape = RoundedCornerShape(8.dp),
                         onClick = { onDeleteClick() }, // Delete
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                     ) {
@@ -277,7 +277,7 @@ fun EditWorkoutDialog(
             }
         },
         confirmButton = {
-            Button(onClick = {
+            Button(shape = RoundedCornerShape(8.dp),onClick = {
                 onSave(workout.copy(
                     description = updatedDescription.value,
                     date = updatedDate.value
@@ -287,7 +287,7 @@ fun EditWorkoutDialog(
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss) {
+            Button(shape = RoundedCornerShape(8.dp),onClick = onDismiss) {
                 Text("Cancel")
             }
         }

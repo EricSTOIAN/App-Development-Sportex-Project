@@ -106,7 +106,7 @@ fun ProfileScreen(
                     }
                 }
             }
-            Button(
+            Button(shape = RoundedCornerShape(8.dp),
                 onClick = {
                     if (isEditing) {
                         viewModel.saveFirstName(newFirstName)

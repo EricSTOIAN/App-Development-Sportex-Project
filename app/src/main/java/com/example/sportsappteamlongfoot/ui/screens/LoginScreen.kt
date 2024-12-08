@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -74,7 +75,7 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { var canLogin = viewModel.checkLogin(username, password)
+        Button(shape = RoundedCornerShape(8.dp),onClick = { var canLogin = viewModel.checkLogin(username, password)
                             if(canLogin){
                                 onNavigateToMenu() //screen change to the main menu screen
                             }}) {
