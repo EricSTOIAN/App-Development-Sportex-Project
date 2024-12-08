@@ -145,5 +145,5 @@ data class Workout(
     val date: String = "",
     val description: String = "",
     val burntCalories: Int = 0,
-    val isCompleted: Boolean = false
+    var isCompleted: Boolean = false
 )
