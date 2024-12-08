@@ -22,6 +22,7 @@ import com.example.sportsappteamlongfoot.ui.screens.PlannerScreen
 import com.example.sportsappteamlongfoot.ui.screens.ProfileScreen
 import com.example.sportsappteamlongfoot.ui.screens.WorkoutDetailsScreen
 import com.example.sportsappteamlongfoot.ui.screens.WorkoutScreen
+import com.example.sportsappteamlongfoot.ui.screens.WorkoutDetailsScreen
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
 
 // Define a CompositionLocal for accessing NavController anywhere in the composable hierarchy
@@ -49,6 +50,9 @@ fun AppNavHost(
                     onProfileClick = {
                         navController.navigate(Profile.route)
 
+                    },
+                    onWorkoutClick = {
+                        navController.navigate("workout_details_screen")
                     },
                     viewModel = viewModel
 
@@ -83,7 +87,7 @@ fun AppNavHost(
                 )
             }
             composable(route = Planner.route) {
-                PlannerScreen( viewModel = viewModel,navController = navController,onNavigateToWorkout = { navController.navigate("workout_screen") }
+                PlannerScreen( viewModel = viewModel,navController = navController,onNavigateToGoal = { navController.navigate("goal_screen") },onNavigateToWorkout = { navController.navigate("workout_screen") }
                 )
             }
 
@@ -104,6 +108,9 @@ fun AppNavHost(
 
             composable (route = "workout_details_screen"){
                 WorkoutDetailsScreen(navController = navController, viewModel = viewModel)
+            }
+            composable(route = "workout_details_screen") {
+                WorkoutDetailsScreen(navController = navController, viewModel = viewModel, modifier = Modifier)
             }
         }
     }

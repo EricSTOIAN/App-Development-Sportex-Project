@@ -153,17 +153,18 @@ fun GoalScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) 
 private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
+    val month = calendar.get(Calendar.MONTH) + 1 // Months are zero-based
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
     val datePickerDialog = android.app.DatePickerDialog(
         context,
         { _, selectedYear, selectedMonth, selectedDay ->
-            val formattedDate = "$selectedYear/${selectedMonth + 1}/$selectedDay"
+            // Format the date to "yyyy-mm-dd"
+            val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
             onDateSelected(formattedDate)
         },
         year,
-        month,
+        month - 1, // Correct zero-based month
         day
     )
     datePickerDialog.show()

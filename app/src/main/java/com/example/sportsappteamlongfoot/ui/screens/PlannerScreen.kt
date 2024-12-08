@@ -45,12 +45,14 @@ import androidx.compose.foundation.layout.*
 
 @SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Unit,viewModel: MyViewModelSimpleSaved, navController: NavController) {
+fun PlannerScreen(modifier: Modifier = Modifier,onNavigateToGoal: () -> Unit,  onNavigateToWorkout: () -> Unit,viewModel: MyViewModelSimpleSaved, navController: NavController) {
     // Observe the state of workouts from the ViewModel
     val workouts = viewModel.getWeeklyWorkouts()
     val upcomingWorkouts = viewModel.getUpcomingWorkouts()
+    val upcomingGoals = viewModel.getUpcomingGoals()
     // Calculate the start of the current week
     val weekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.MONDAY.value.toLong())
+    val goals = viewModel.getWeeklyGoals()
 
     // Prepare data to be displayed
     val weeklyWorkouts = mutableListOf<Pair<DayOfWeek, List<Workout>>>()
@@ -137,6 +139,8 @@ fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Uni
                                 }
                             }
                         }
+
+
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -152,8 +156,16 @@ fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Uni
             ) {
                 Text(text = "Add Workout")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+        onClick = onNavigateToGoal,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(text = "Add Goal")
+            }
             Spacer(modifier = Modifier.height(24.dp))
-
             // Upcoming Workouts Title
             Text(
                 text = "Upcoming Workouts",
@@ -201,7 +213,7 @@ fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Uni
 
             // Upcoming Workouts Title
             Text(
-                text = "Upcoming Workouts",
+                text = "Upcoming Goals",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
@@ -210,7 +222,7 @@ fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Uni
             LazyRow(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(upcomingWorkouts) { workout ->
+                items(upcomingGoals) { goal ->
                     Card(
                         modifier = Modifier
                             .padding(horizontal = 8.dp)
@@ -228,13 +240,13 @@ fun PlannerScreen(modifier: Modifier = Modifier,  onNavigateToWorkout: () -> Uni
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
-                                text = workout.name,
+                                text = goal.name,
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = Color.White
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Date: ${workout.date}",
+                                text = "Date: ${goal.date}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White
                             )
@@ -262,7 +274,8 @@ fun PlannerScreenPreview() {
         modifier = TODO(),
         onNavigateToWorkout = TODO(),
         viewModel = TODO(),
-        navController = TODO()
+        navController = TODO(),
+        onNavigateToGoal = TODO()
     )
 }
 
