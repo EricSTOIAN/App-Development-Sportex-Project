@@ -136,7 +136,8 @@ class DataStoreManager (private val context: Context) {
 data class Goal(
     val name: String = "",
     val description: String = "",
-    val date: String = ""
+    val date: String = "",
+    val isCompleted: Boolean = false
 )
 
 
