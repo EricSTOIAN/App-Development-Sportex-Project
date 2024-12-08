@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,174 +20,282 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.navigation.NavController
+import com.example.sportsappteamlongfoot.data.Workout
+import com.example.sportsappteamlongfoot.ui.BottomBar
+import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.WeekFields
+import java.util.Locale
+import androidx.compose.foundation.layout.*
+import com.example.sportsappteamlongfoot.data.Goal
 
+
+@SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun PlannerScreen(modifier: Modifier = Modifier) {
-      Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp)
-            ) {
-        // Header with Page Title and Profile Icon
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Planner",  // Page Title
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Icon(
-                imageVector = Icons.Default.AccountCircle, // Profile icon
-                contentDescription = "Profile Icon",
-                tint = Color.Gray,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
-        }
+fun PlannerScreen(
+    modifier: Modifier = Modifier,
+    onNavigateToGoal: () -> Unit,
+    onNavigateToWorkout: () -> Unit,
+    viewModel: MyViewModelSimpleSaved,
+    navController: NavController,
+    onWorkoutClick: () -> Unit,
+    onGoalDetailsClick: () -> Unit,
+) {
+    val workouts = viewModel.getWeeklyWorkouts()
+    val goals = viewModel.getWeeklyGoals()
+    val upcomingWorkouts = viewModel.getUpcomingWorkouts()
+    val upcomingGoals = viewModel.getUpcomingGoals()
+    val weekStart = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), DayOfWeek.SUNDAY.value.toLong())
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Weekly Calendar with Time Graph
-        WeeklyCalendar(modifier = Modifier.fillMaxWidth())
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Button to add a workout
-        AddWorkoutButton(modifier = Modifier.fillMaxWidth())
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Upcoming Workouts Carousel
-        UpcomingWorkoutsCarousel(modifier = Modifier.fillMaxWidth())
+    val weeklyData = mutableListOf<Pair<DayOfWeek, List<Pair<Workout?, Goal?>>>>()
+    DayOfWeek.values().forEachIndexed { index, dayOfWeek ->
+        val dayDate = weekStart.plusDays(index.toLong())
+        val dayWorkouts = workouts.filter { LocalDate.parse(it.date).dayOfWeek == dayOfWeek }
+        val dayGoals = goals.filter { LocalDate.parse(it.date).dayOfWeek == dayOfWeek }
+        val combinedData = dayWorkouts.map { Pair(it, null) } + dayGoals.map { Pair(null, it) }
+        weeklyData.add(Pair(dayOfWeek, combinedData))
     }
-}
 
-@Composable
-fun WeeklyCalendar(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.padding(horizontal = 4.dp),
-        shape = MaterialTheme.shapes.medium
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background) // Set background
+            .padding(16.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .padding(bottom = 70.dp) // Reserve space for BottomBar
         ) {
-            // Weekdays
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Text(
+                text = "Planner",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 8.dp),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Text(
+                text = "Week of ${weekStart.month} ${weekStart.dayOfMonth}",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = 16.dp),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            LazyRow(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-                weekdays.forEach { day ->
-                    Text(
-                        text = day,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
+                items(weeklyData) { (dayOfWeek, dayData) ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .width(100.dp)
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        Text(
+                            text = dayOfWeek.toString().substring(0, 3),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground, // Dynamic text color
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (dayData.isNotEmpty()) MaterialTheme.colorScheme.primary else Color.Unspecified
+                            ),
+                            elevation = CardDefaults.cardElevation(4.dp)
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                if (dayData.isEmpty()) {
+                                    Text(
+                                        text = "free day!",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Black
+                                    )
+                                } else {
+                                    dayData.forEach { (workout, goal) ->
+                                        workout?.let {
+                                            Text(
+                                                text = it.name,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        }
+                                        goal?.let {
+                                            Text(
+                                                text = it.name,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onNavigateToWorkout,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+
+            ) {
+                Text(text = "Add Workout")
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Time Graph
-            Canvas(modifier = Modifier.fillMaxWidth().height(120.dp)) {
-                drawLine(
-                    color = Color.Blue,  // Blue line in the center
-                    strokeWidth = 4f,
-                    start = Offset(0f, size.height / 2),
-                    end = Offset(size.width, size.height / 2)
+            Button(
+                onClick = onNavigateToGoal,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Text(text = "Add Goal")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                Text(
+                    text = "Upcoming Workouts",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
+
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    items(upcomingWorkouts) { workout ->
+                        Card(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .size(width = 200.dp, height = 100.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            elevation = CardDefaults.cardElevation(4.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Text(
+                                    text = workout.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Date: ${workout.date}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = onWorkoutClick,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(text = "View More Workouts")
+                }
+            }
+
+            Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                Text(
+                    text = "Upcoming Goals",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    items(upcomingGoals) { goal ->
+                        Card(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .size(width = 200.dp, height = 100.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            elevation = CardDefaults.cardElevation(4.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Text(
+                                    text = goal.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Due: ${goal.date}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = onGoalDetailsClick,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(text = "View More Goals")
+                }
             }
         }
+
+        BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
 
-@Composable
-fun AddWorkoutButton(modifier: Modifier = Modifier) {
-    Button(
-        onClick = { /* Handle workout addition logic */ },
-        modifier = modifier
-            .padding(horizontal = 4.dp)
-            .size(120.dp, 48.dp)  // Adjust size to make it smaller
-            .clip(MaterialTheme.shapes.small)  // You can adjust the shape here
-    ) {
-        Text(
-            text = "Add Workout",
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.White
-        )
-    }
-}
 
-@Composable
-fun UpcomingWorkoutsCarousel(modifier: Modifier = Modifier) {
-    val scrollState = rememberScrollState()
 
-    Column(
-        modifier = modifier
-            .padding(8.dp)
-            .horizontalScroll(scrollState)
-    ) {
-        Text(
-            text = "Upcoming Workouts",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // This is a placeholder for the carousel of upcoming workouts
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            UpcomingWorkoutCard()
-            UpcomingWorkoutCard()
-            UpcomingWorkoutCard()
-        }
-    }
-}
-
-@Composable
-fun UpcomingWorkoutCard(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .size(150.dp, 100.dp),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Workout",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PlannerScreenPreview() {
-    PlannerScreen()
-}
 
