@@ -1,5 +1,6 @@
 package com.example.sportsappteamlongfoot.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,12 +21,14 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -33,17 +36,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.sportsappteamlongfoot.R
 import com.example.sportsappteamlongfoot.model.AIModel
 import com.example.sportsappteamlongfoot.model.Workout
+import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 private var workoutDatastoreInstance: Workout = Workout("","","","");
 
+@SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun AIChatBox(modifier: Modifier = Modifier){
+fun AIChatBox(navController: NavController, viewModel: MyViewModelSimpleSaved,modifier: Modifier = Modifier.fillMaxWidth()){
     var userInput by rememberSaveable { mutableStateOf("") }
     var aiResponseInUI by rememberSaveable { mutableStateOf("") }
     val aiModel = AIModel()
@@ -51,6 +58,8 @@ fun AIChatBox(modifier: Modifier = Modifier){
     val coroutineScope = rememberCoroutineScope()
     var btnIsEnabled by rememberSaveable { mutableStateOf(true) }
     val focusManager = LocalFocusManager.current
+    val goalsData = viewModel.goals.value
+    val workoutData = viewModel.workouts.value
 
 
     Box(modifier = modifier
@@ -80,6 +89,17 @@ fun AIChatBox(modifier: Modifier = Modifier){
                     .height(70.dp)
                     .width(500.dp)
             )
+
+            Button(
+                modifier = Modifier.padding(start = 50.dp, top = 160.dp),
+                onClick = {
+                    navController.popBackStack()
+                }
+            ){
+                Text(
+                    text = "Back"
+                )
+            }
 
             Button(onClick = {
                 aiResponseInUI = " "
@@ -141,10 +161,14 @@ fun AIChatBox(modifier: Modifier = Modifier){
 }
 
 
+@SuppressLint("NewApi")
 @Preview
 @Composable
 fun AIChatBoxPreview(){
-    AIChatBox(Modifier.fillMaxWidth())
+    val mockContext = LocalContext.current
+    val mockViewModel = remember {MyViewModelSimpleSaved(mockContext)}
+    val mockNavController = rememberNavController()
+    AIChatBox(mockNavController, mockViewModel, Modifier.fillMaxWidth())
 }
 
 fun setWorkoutInstance(workout: Workout){

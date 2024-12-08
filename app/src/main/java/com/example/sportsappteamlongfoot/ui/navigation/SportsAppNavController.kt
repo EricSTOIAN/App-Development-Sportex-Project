@@ -16,6 +16,7 @@ import com.example.sportsappteamlongfoot.ui.screens.LoginScreen
 import com.example.sportsappteamlongfoot.ui.screens.RegisterScreen
 import com.example.sportsappteamlongfoot.ui.MainScreen
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
+import com.example.sportsappteamlongfoot.ui.screens.AIChatBox
 //import com.example.sportsappteamlongfoot.ui.screens.GoalDetailsScreen
 import com.example.sportsappteamlongfoot.ui.screens.GoalScreen
 import com.example.sportsappteamlongfoot.ui.screens.PlannerScreen
@@ -114,6 +115,10 @@ fun AppNavHost(
                     navController.navigate(Profile.route)
 
                 }, viewModel = viewModel, modifier = Modifier)
+            }
+
+            composable(route = "ai_chat_screen"){
+                AIChatBox(navController = navController, viewModel = viewModel)
             }
         }
     }
