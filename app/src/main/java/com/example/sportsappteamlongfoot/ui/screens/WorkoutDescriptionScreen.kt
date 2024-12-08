@@ -55,12 +55,7 @@ import kotlinx.coroutines.flow.count
 import java.time.LocalDate
 
 
-//For debugging purposes
-private val workouts: List<Workout> = listOf(
-    Workout("Run 5 km","Running","July 4 2024","First day of running"),
-    Workout("Bike 10 km ","Biking","July 15 2024","First day of biking. I want to gradually become better"),
-    Workout("Do 20 Push-Ups","Exercises","August 6 2024","I will do 20 pushups for today.")
-)
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -74,9 +69,7 @@ fun WorkoutDetailsScreen(
     val activeWorkouts = workoutsState.value.filter {
         LocalDate.parse(it.date) == LocalDate.now()
     }
-    val upcomingWorkouts = workoutsState.value.filter {
-        LocalDate.parse(it.date).isAfter(LocalDate.now())
-    }
+    val upcomingWorkouts = viewModel.getUpcomingWorkouts()
 
     Box(
         modifier = Modifier

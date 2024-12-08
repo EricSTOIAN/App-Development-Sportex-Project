@@ -26,6 +26,7 @@ import java.util.Calendar
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSaved) {
+    var calories by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -64,7 +65,13 @@ fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSave
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+            value = calories,
+            onValueChange = { calories = it },
+            label = { Text("Calories to be burnt (estimate)") },
+            modifier = Modifier.fillMaxWidth()
 
+        )
         // Type Dropdown
         Text(text = "Type", style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(8.dp))
@@ -123,15 +130,19 @@ fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSave
                 Text(text = "Cancel")
             }
             Button(onClick = {
-                val workout = Workout(
-                    name = name,
-                    type = selectedType,
-                    date = date,
-                    description = description,
-                    burntCalories = 0,
-                    isCompleted = false
-                )
-                viewModel.addWorkout(workout)
+                val workout = calories.toIntOrNull()?.let {
+                    Workout(
+                        name = name,
+                        type = selectedType,
+                        date = date,
+                        description = description,
+                        burntCalories = calories.toInt(),
+                        isCompleted = false
+                    )
+                }
+                if (workout != null) {
+                    viewModel.addWorkout(workout)
+                }
                 isSnackbarVisible = true
             }) {
 
