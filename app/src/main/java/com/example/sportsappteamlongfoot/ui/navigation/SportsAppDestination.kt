@@ -66,7 +66,9 @@ object Planner : AppDestination {
             onNavigateToGoal = TODO(),
             onNavigateToWorkout = TODO(),
             viewModel = TODO(),
-            navController = TODO()
+            navController = TODO(),
+            onWorkoutClick = TODO(),
+            onGoalDetailsClick = TODO()
         )
     }
 }

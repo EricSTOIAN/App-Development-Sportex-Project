@@ -143,7 +143,7 @@ fun MainScreen(
             ) {
                 if(weeklyGoals!=null){
                     weeklyGoals.forEach { goal ->
-                        LargeEmptyCardGoal(modifier = Modifier, onGoalClick) {
+                        LargeEmptyCardGoal(modifier = Modifier, onGoalDetailsClick) {
                             Column(
                                 modifier = Modifier.padding(16.dp)
                             ) {
@@ -297,8 +297,7 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, co
                     ) {
                         Text(
                             text="View More",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
 
@@ -309,7 +308,11 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, co
 }
 
 @Composable
-fun LargeEmptyCardGoal(modifier: Modifier = Modifier, onGoalClick: () -> Unit, content: @Composable () -> Unit) {
+fun LargeEmptyCardGoal(
+    modifier: Modifier = Modifier,
+    onGoalClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -332,16 +335,14 @@ fun LargeEmptyCardGoal(modifier: Modifier = Modifier, onGoalClick: () -> Unit, c
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.BottomEnd
                 ) {
-                      Button(
-                onClick = onGoalDetailsClick, // Navigate to Goal Details Screen
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text(
-                    text = "View Goal Details",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                    Button(
+                        onClick = onGoalClick
+                    ) {
+                        Text(
+                            text = "View Goal Details",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }

@@ -56,12 +56,9 @@ fun AppNavHost(
                     },
 
                     onGoalDetailsClick = { // Handle navigation to Goal Details Screen
-                        navController.navigate("goal_details_screen")
+                        navController.navigate("goal_details_screen")},
 
-                    onGoalClick = {
-                        navController.navigate("workout_details_screen")
 
-                    },
                     viewModel = viewModel
                 )
             }
@@ -94,7 +91,12 @@ fun AppNavHost(
                 )
             }
             composable(route = Planner.route) {
-                PlannerScreen( viewModel = viewModel,navController = navController,onNavigateToGoal = { navController.navigate("goal_screen") },onNavigateToWorkout = { navController.navigate("workout_screen") }
+                PlannerScreen( onWorkoutClick = {
+                    navController.navigate("workout_details_screen")
+                },
+
+                    onGoalDetailsClick = { // Handle navigation to Goal Details Screen
+                        navController.navigate("goal_details_screen")},viewModel = viewModel,navController = navController,onNavigateToGoal = { navController.navigate("goal_screen") },onNavigateToWorkout = { navController.navigate("workout_screen") }
                 )
             }
 

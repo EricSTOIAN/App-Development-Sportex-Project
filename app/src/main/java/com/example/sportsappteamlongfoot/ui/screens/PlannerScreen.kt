@@ -51,7 +51,9 @@ fun PlannerScreen(
     onNavigateToGoal: () -> Unit,
     onNavigateToWorkout: () -> Unit,
     viewModel: MyViewModelSimpleSaved,
-    navController: NavController
+    navController: NavController,
+    onWorkoutClick: () -> Unit,
+    onGoalDetailsClick: () -> Unit,
 ) {
     // Observe the state of workouts and goals from the ViewModel
     val workouts = viewModel.getWeeklyWorkouts()
@@ -162,18 +164,16 @@ fun PlannerScreen(
                 }
             }
 
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Button(
-                onClick = onNavigateToWorkout,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    onClick = onNavigateToWorkout,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
             ) {
-                Text(text = "Add Workout")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "Add Workout")
+        }
+            Spacer(modifier = Modifier.height(8.dp))
             Button(
                 onClick = onNavigateToGoal,
                 modifier = Modifier
@@ -182,95 +182,119 @@ fun PlannerScreen(
             ) {
                 Text(text = "Add Goal")
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Upcoming Workouts Title
-            Text(
-                text = "Upcoming Workouts",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-
-            // Upcoming Workouts Carousel
-            LazyRow(
-                modifier = Modifier.fillMaxWidth()
+            // Upcoming Workouts Section
+            Column(
+                modifier = Modifier.padding(vertical = 16.dp)
             ) {
-                items(upcomingWorkouts) { workout ->
-                    Card(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .size(width = 200.dp, height = 100.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        )
-                    ) {
-                        Column(
+                Text(
+                    text = "Upcoming Workouts",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(upcomingWorkouts) { workout ->
+                        Card(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start
+                                .padding(horizontal = 8.dp)
+                                .size(width = 200.dp, height = 100.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondary
+                            )
                         ) {
-                            Text(
-                                text = workout.name,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Date: ${workout.date}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Text(
+                                    text = workout.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Date: ${workout.date}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = onWorkoutClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(text = "View More Workouts")
+                }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            //Spacer(modifier = Modifier.height(8.dp))
 
-            // Upcoming Goals Title
-            Text(
-                text = "Upcoming Goals",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-
-            // Upcoming Goals Carousel
-            LazyRow(
-                modifier = Modifier.fillMaxWidth()
+            // Upcoming Goals Section
+            Column(
+                modifier = Modifier.padding(vertical = 16.dp)
             ) {
-                items(upcomingGoals) { goal ->
-                    Card(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .size(width = 200.dp, height = 100.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        )
-                    ) {
-                        Column(
+                Text(
+                    text = "Upcoming Goals",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(upcomingGoals) { goal ->
+                        Card(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start
+                                .padding(horizontal = 8.dp)
+                                .size(width = 200.dp, height = 100.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondary
+                            )
                         ) {
-                            Text(
-                                text = goal.name,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Due: ${goal.date}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Text(
+                                    text = goal.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Due: ${goal.date}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick =onGoalDetailsClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(text = "View More Goals")
                 }
             }
         }
@@ -279,7 +303,6 @@ fun PlannerScreen(
         BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
-
 
 
 
