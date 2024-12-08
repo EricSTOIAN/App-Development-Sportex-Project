@@ -242,6 +242,28 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             println("Goal saved: $updatedGoals")
         }
     }
+    fun editGoal(updatedGoal: Goal) {
+        val updatedGoals = _goals.value.map {
+            if (it.name == updatedGoal.name) updatedGoal else it
+        }
+        _goals.value = updatedGoals
+        saveGoals(updatedGoals)
+    }
+
+
+    fun deleteGoal(goal: Goal) {
+        val updatedGoals = _goals.value.toMutableList().apply { remove(goal) }
+        _goals.value = updatedGoals
+        saveGoals(updatedGoals)
+    }
+
+    fun completeGoal(goal: Goal) {
+        val updatedGoals = _goals.value.map {
+            if (it.name == goal.name) it.copy(description = "${it.description} (Completed)") else it
+        }
+        _goals.value = updatedGoals
+        saveGoals(updatedGoals)
+    }
 
 
     fun getWorkoutForToday(): Workout? {

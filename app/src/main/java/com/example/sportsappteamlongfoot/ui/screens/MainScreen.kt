@@ -36,7 +36,14 @@ import androidx.navigation.NavController
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, onWorkoutClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
+fun MainScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    onProfileClick: () -> Unit,
+    onWorkoutClick: () -> Unit,
+    onGoalDetailsClick: () -> Unit,
+    viewModel: MyViewModelSimpleSaved
+) {
     val workouts by viewModel.workouts.collectAsState()
     val todaysWorkout = viewModel.getWorkoutForToday()
     val caloriesBurnt = viewModel.getCaloriesForCurrentWeek()
@@ -119,11 +126,27 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
                 // Pass dynamic values here for WorkoutsCard
                 WorkoutsCard(completed = workoutsCompleted.toString(), total = totalWorkouts, modifier = Modifier.weight(1f).heightIn(min = 120.dp))
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Add button to navigate to Goal Details Screen
+            Button(
+                onClick = onGoalDetailsClick, // Navigate to Goal Details Screen
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text(
+                    text = "View Goal Details",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
 
         BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
+
 
 @Composable
 fun CaloriesCard(title: String, value: String, modifier: Modifier = Modifier) {
@@ -256,6 +279,7 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, co
                             color = Color.Black
                         )
                     }
+
                 }
             }
         }
