@@ -5,8 +5,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +20,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -58,10 +65,13 @@ private val sampleWorkout: List<Workout> = listOf(
     Workout("Bike 50km ","Biking","March 2 2021", "Just for fun"),
     Workout("Do 60 Push-Ups","Exercises","June 7 2027", "Need to increase muscular strength")
 )
-
 @SuppressLint("NewApi", "StateFlowValueCalledInComposition")
 @Composable
-fun AIChatBox(navController: NavController, viewModel: MyViewModelSimpleSaved,modifier: Modifier = Modifier.fillMaxWidth()){
+fun AIChatBox(
+    navController: NavController,
+    viewModel: MyViewModelSimpleSaved,
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
     var userInputInUI by rememberSaveable { mutableStateOf("") }
     var aiResponseInUI by rememberSaveable { mutableStateOf("") }
     val aiModel = AIModel()
@@ -72,150 +82,105 @@ fun AIChatBox(navController: NavController, viewModel: MyViewModelSimpleSaved,mo
     val goalsData: List<Goal> = sampleGoals
     val workoutData: List<Workout> = sampleWorkout
 
-//    val goalsData: List<Goal> = viewModel.goals.value
-//    val workoutData: List<Workout> = viewModel.workouts.value
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .verticalScroll(scrollState)
+    ) {
+        // Title
+        Text(
+            text = "What can I help you with?",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-    Box(modifier = modifier
-        .verticalScroll(scrollState)
-        .background(Color.Blue)
-    ){
+        // Input Field
+        TextField(
+            value = userInputInUI,
+            onValueChange = { userInputInUI = it },
+            label = { Text("Type anything") },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
 
-        Box(modifier = modifier
-            .padding(start = 20.dp, top = 20.dp,end = 20.dp)){
-            Text(
-                modifier = Modifier.padding(top = 25.dp),
-                text = "What can I help you with",
-                fontSize = 30.sp
-            )
-            TextField(
-                value = userInputInUI,
-                onValueChange = { userInputInUI = it},
-                textStyle = TextStyle(textAlign = TextAlign.Center),
-                label = {
-                    Text(text = "Type anything",
-                        modifier = Modifier.align(alignment = Alignment.Center))
-                },
-                shape = RoundedCornerShape(50.dp),
-                modifier = Modifier
-                    .padding(top = 80.dp)
-                    .border(border = BorderStroke(5.dp, Color.Gray), shape = RoundedCornerShape(50.dp))
-                    .height(70.dp)
-                    .width(500.dp)
-            )
-
+        // Buttons
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
             Button(
-                modifier = Modifier.padding(start = 50.dp, top = 160.dp),
-                onClick = {
-                    navController.popBackStack()
-                }
-            ){
-                Text(
-                    text = "Back"
-                )
-            }
-
-            Button(onClick = {
-                aiResponseInUI = " "
-                btnIsEnabled = false
-                focusManager.clearFocus() //Hides the keyboard
-                coroutineScope.launch{
-                    var userInput = userInputInUI;
-                    var response = "";
-
-                    //Feed AI Workout and Goals data if user specifies anything related
-                    if (userInputInUI.contains("workout") && userInputInUI.contains("goal")){
-                        userInput += userInput+"Here are my current workouts"
-
-                        for (item in workoutData){
-                            userInput += userInput +
-                                    "Name: ${item.name}," +
-                                    "Description: ${item.description}," +
-                                    "Date: ${item.date},"+
-                                    "Type: ${item.type}"  +
-                                    "\n"
-                        }
-                        userInput += userInput+"Here are my current goals"
-                        for(item in goalsData){
-                            userInput += "Name: ${item.name}"
-                            "Date: ${item.date}"
-                            "Description: ${item.description}"+
-                                    "\n"
-                        }
-                    }
-                    else if (userInputInUI.contains("workout")){
-                        userInput += "Here are my current workouts"
-                        for (item in workoutData){
-                            userInput += userInput +
-                            "Name: ${item.name}," +
-                            "Description: ${item.description}," +
-                            "Date: ${item.date},"+
-                            "Type: ${item.type}"  +
-                            "\n"
-                        }
-                    }
-                    else if (userInputInUI.contains("goal")){
-                        userInput += "Here are my current goals"
-                        for(item in goalsData){
-                            userInput += "Name: ${item.name}"
-                            "Date: ${item.date}"
-                            "Description: ${item.description}"+
-                            "\n"
-                        }
-                    }
-
-                    response = aiModel.GenerateAIResponse(userInput).toString()
-
-                    //Gives typing effect
-                    for(i in response.indices){
-                        aiResponseInUI = response.substring(0, i + 1)
-                        delay(20) // Delay to simulate typing
-                    }
-
-                    btnIsEnabled = true
-                }
-            },
-                modifier= Modifier.padding(start = 150.dp, top = 160.dp),
-                enabled = btnIsEnabled
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.weight(1f).padding(end = 8.dp)
             ) {
-                Text(
-                    text = if (!btnIsEnabled) "Typing..." else "Generate"
-                )
+                Text("Back")
+            }
+            Button(
+                onClick = {
+                    aiResponseInUI = ""
+                    btnIsEnabled = false
+                    focusManager.clearFocus()
+                    coroutineScope.launch {
+                        var userInput = userInputInUI
+                        var response = ""
+
+                        if (userInputInUI.contains("workout") && userInputInUI.contains("goal")) {
+                            userInput += "Here are my current workouts and goals: \n"
+                            workoutData.forEach {
+                                userInput += "Workout: ${it.name}, Date: ${it.date}\n"
+                            }
+                            goalsData.forEach {
+                                userInput += "Goal: ${it.name}, Date: ${it.date}\n"
+                            }
+                        }
+                        response = aiModel.GenerateAIResponse(userInput).toString()
+
+                        // Simulate typing effect
+                        for (i in response.indices) {
+                            aiResponseInUI = response.substring(0, i + 1)
+                            delay(20)
+                        }
+                        btnIsEnabled = true
+                    }
+                },
+                enabled = btnIsEnabled,
+                modifier = Modifier.weight(1f).padding(start = 8.dp)
+            ) {
+                Text(text = if (btnIsEnabled) "Generate" else "Typing...")
             }
         }
 
-        Box(modifier = Modifier
-            .padding(top=250.dp))
-        {
-
-            Image(painter = painterResource(R.drawable.google_gemini_icon),
-                contentDescription = "Gemini",
-                modifier = Modifier
-                    .size(45.dp)
+        // AI Response
+        Card(
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+        ) {
+            Text(
+                text = aiResponseInUI,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier.padding(16.dp)
             )
-
-            Box(
-                modifier
-                    .padding(start = 50.dp, end = 20.dp)
-                    .border(
-                        border = BorderStroke(8.dp, Color.Gray),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .background(Color.LightGray, shape = RoundedCornerShape(16.dp))
-
-                ){
-                Text(
-                    text = aiResponseInUI,
-                    fontSize = 30.sp,
-                    lineHeight = 35.sp,
-                    color = Color.Black,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(25.dp)
-                )
-            }
         }
+
+        // Gemini Icon
+        Image(
+            painter = painterResource(R.drawable.google_gemini_icon),
+            contentDescription = "Gemini",
+            modifier = Modifier
+                .size(48.dp)
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 16.dp)
+        )
     }
 }
+
 
 
 @SuppressLint("NewApi")
