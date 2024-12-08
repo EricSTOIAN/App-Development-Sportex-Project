@@ -261,12 +261,18 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     fun completeGoal(goal: Goal) {
         val updatedGoals = _goals.value.map {
-            if (it.name == goal.name) it.copy(description = "${it.description} (Completed)") else it
+            if (it.name == goal.name) {
+                it.copy(
+                    description = "${it.description} (Completed)",
+                    isCompleted = true // Set the isCompleted flag to true
+                )
+            } else {
+                it
+            }
         }
         _goals.value = updatedGoals
         saveGoals(updatedGoals)
     }
-
     fun editWorkout(updatedWorkout: Workout) {
         val updatedWorkouts = _workouts.value.map {
             if (it.name == updatedWorkout.name) updatedWorkout else it
@@ -283,7 +289,14 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
 
     fun completeWorkout(workout: Workout) {
         val updatedWorkout = _workouts.value.map {
-            if (it.name == workout.name) it.copy(description = "${it.description} (Completed)") else it
+            if (it.name == workout.name) {
+                it.copy(
+                    description = "${it.description} (Completed)",
+                    isCompleted = true // Set the isCompleted flag to true
+                )
+            } else {
+                it
+            }
         }
         _workouts.value = updatedWorkout
         saveWorkouts(updatedWorkout)
