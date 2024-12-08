@@ -114,6 +114,7 @@ fun WorkoutScreen(navController: NavController, viewModel: MyViewModelSimpleSave
         Button(
             onClick = {
                 description = "AI-generated suggestion for $selectedType goal" // Simulate AI response
+                navController.navigate("ai_chat_screen");
             },
             modifier = Modifier.align(Alignment.End)
         ) {
