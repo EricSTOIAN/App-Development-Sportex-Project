@@ -19,7 +19,7 @@ object MainMenu : AppDestination {
         get() = TODO("Not yet implemented")
 
     @SuppressLint("NewApi")
-    fun screen(onProfileClick: () -> Unit, onWorkoutClick: () -> Unit): @Composable () -> Unit = {
+    fun screen(onProfileClick: () -> Unit, onWorkoutClick: () -> Unit,  onGoalDetailsClick: () -> Unit): @Composable () -> Unit = {
         MainScreen(
             onProfileClick = onProfileClick,
             onWorkoutClick = onWorkoutClick,
@@ -27,7 +27,9 @@ object MainMenu : AppDestination {
 
             modifier = TODO(),
             viewModel = TODO(),
-            onGoalClick = TODO()
+
+            onGoalDetailsClick = onGoalDetailsClick
+
         )
     }
 }

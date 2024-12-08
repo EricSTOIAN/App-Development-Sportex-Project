@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportsappteamlongfoot.data.Goal
+import com.example.sportsappteamlongfoot.data.Workout
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

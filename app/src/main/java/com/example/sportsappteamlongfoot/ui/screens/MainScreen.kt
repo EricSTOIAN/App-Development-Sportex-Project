@@ -36,7 +36,15 @@ import androidx.navigation.NavController
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onProfileClick: () -> Unit, onWorkoutClick: () -> Unit, onGoalClick: () -> Unit, viewModel: MyViewModelSimpleSaved) {
+fun MainScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    onProfileClick: () -> Unit,
+    onWorkoutClick: () -> Unit,
+    onGoalDetailsClick: () -> Unit,
+    viewModel: MyViewModelSimpleSaved
+) {
+
     val workouts by viewModel.workouts.collectAsState()
     val todaysWorkout = viewModel.getWorkoutForToday()
     val caloriesBurnt = viewModel.getCaloriesForCurrentWeek()
@@ -122,6 +130,7 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
             Text(
                 text = "Goals for the Week",
                 style = MaterialTheme.typography.headlineSmall,
@@ -152,12 +161,14 @@ fun MainScreen(navController: NavController, modifier: Modifier = Modifier, onPr
                     }
                 }
 
+
             }
         }
 
         BottomBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
+
 
 @Composable
 fun CaloriesCard(title: String, value: String, modifier: Modifier = Modifier) {
@@ -290,6 +301,7 @@ fun LargeEmptyCard(modifier: Modifier = Modifier, onWorkoutClick: () -> Unit, co
                             color = Color.Black
                         )
                     }
+
                 }
             }
         }
@@ -320,16 +332,16 @@ fun LargeEmptyCardGoal(modifier: Modifier = Modifier, onGoalClick: () -> Unit, c
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.BottomEnd
                 ) {
-                    Button(
-                        onClick = { onGoalClick() },
-                        // Making the button background transparent
-                    ) {
-                        Text(
-                            text="View More",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
-                    }
+                      Button(
+                onClick = onGoalDetailsClick, // Navigate to Goal Details Screen
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text(
+                    text = "View Goal Details",
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 }
             }
         }

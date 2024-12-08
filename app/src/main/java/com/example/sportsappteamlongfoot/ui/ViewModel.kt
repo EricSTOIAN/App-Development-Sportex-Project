@@ -3,7 +3,6 @@ package com.example.sportsappteamlongfoot.ui
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsappteamlongfoot.data.DataStoreManager
@@ -67,8 +66,6 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             dataStoreManager.workoutsFlow.collect { _workouts.value = it }
 
         }
-
-
     }
     private fun loadDataFromDataStore() {
         viewModelScope.launch {
@@ -218,7 +215,6 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         return false
     }
 
-
     private fun saveGoals(goals: List<Goal>) {
         viewModelScope.launch {
             dataStoreManager.saveGoals(goals)
@@ -247,6 +243,28 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             dataStoreManager.saveGoals(updatedGoals)
             println("Goal saved: $updatedGoals")
         }
+    }
+    fun editGoal(updatedGoal: Goal) {
+        val updatedGoals = _goals.value.map {
+            if (it.name == updatedGoal.name) updatedGoal else it
+        }
+        _goals.value = updatedGoals
+        saveGoals(updatedGoals)
+    }
+
+
+    fun deleteGoal(goal: Goal) {
+        val updatedGoals = _goals.value.toMutableList().apply { remove(goal) }
+        _goals.value = updatedGoals
+        saveGoals(updatedGoals)
+    }
+
+    fun completeGoal(goal: Goal) {
+        val updatedGoals = _goals.value.map {
+            if (it.name == goal.name) it.copy(description = "${it.description} (Completed)") else it
+        }
+        _goals.value = updatedGoals
+        saveGoals(updatedGoals)
     }
 
 
@@ -285,8 +303,6 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
         return Pair(completedWorkouts, totalWorkouts)
     }
 
-
-
     fun getAllWorkouts(): StateFlow<List<Workout>> = _workouts
 
     fun getWeeklyWorkouts(): List<Workout> {
@@ -324,6 +340,7 @@ class MyViewModelSimpleSaved(private val context: Context) : ViewModel() {
             .filter { LocalDate.parse(it.date).isAfter(LocalDate.now().minusDays(1)) }
             .sortedBy { LocalDate.parse(it.date) }
     }
+
 
     fun getGoalsForCurrentWeek(): List<Goal> {
         val today = LocalDate.now()

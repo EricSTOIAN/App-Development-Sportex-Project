@@ -16,9 +16,12 @@ import com.example.sportsappteamlongfoot.ui.screens.LoginScreen
 import com.example.sportsappteamlongfoot.ui.screens.RegisterScreen
 import com.example.sportsappteamlongfoot.ui.MainScreen
 import com.example.sportsappteamlongfoot.ui.MyViewModelSimpleSaved
+import com.example.sportsappteamlongfoot.ui.screens.GoalDetailsScreen
+//import com.example.sportsappteamlongfoot.ui.screens.GoalDetailsScreen
 import com.example.sportsappteamlongfoot.ui.screens.GoalScreen
 import com.example.sportsappteamlongfoot.ui.screens.PlannerScreen
 import com.example.sportsappteamlongfoot.ui.screens.ProfileScreen
+import com.example.sportsappteamlongfoot.ui.screens.WorkoutDetailsScreen
 import com.example.sportsappteamlongfoot.ui.screens.WorkoutScreen
 import com.example.sportsappteamlongfoot.ui.screens.WorkoutDetailsScreen
 import com.example.sportsappteamlongfoot.ui.theme.SportsAppTeamLongFootTheme
@@ -44,19 +47,22 @@ fun AppNavHost(
         ) {
             composable(route = MainMenu.route) {
                 MainScreen(
-                    navController = navController,  // Pass navController here
+                    navController = navController,
                     onProfileClick = {
                         navController.navigate(Profile.route)
-
                     },
                     onWorkoutClick = {
                         navController.navigate("workout_details_screen")
                     },
+
+                    onGoalDetailsClick = { // Handle navigation to Goal Details Screen
+                        navController.navigate("goal_details_screen")
+
                     onGoalClick = {
                         navController.navigate("workout_details_screen")
+
                     },
                     viewModel = viewModel
-
                 )
             }
             composable(route = Register.route) {
@@ -93,16 +99,25 @@ fun AppNavHost(
             }
 
 
+            //Adding workout
             composable(route = "workout_screen") {
                 WorkoutScreen(navController = navController, viewModel = viewModel)
             }
+
+            //Adding goal
             composable(route = "goal_screen") {
-
                 GoalScreen(navController = navController, viewModel = viewModel)
-
             }
+
+            composable (route = "goal_details_screen"){
+                GoalDetailsScreen(navController = navController, viewModel = viewModel)
+            }
+
             composable(route = "workout_details_screen") {
-                WorkoutDetailsScreen(navController = navController, viewModel = viewModel, modifier = Modifier)
+                WorkoutDetailsScreen(navController = navController,  onProfileClick = {
+                    navController.navigate(Profile.route)
+
+                }, viewModel = viewModel, modifier = Modifier)
             }
         }
     }
