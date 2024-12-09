@@ -137,7 +137,46 @@ fun AIChatBox(
                             goalsData.forEach {
                                 userInput += "Goal: ${it.name}, Date: ${it.date}\n"
                             }
+
+                            userInput+= "Provide the answers sports related in the following format:" +
+                                    "Here are some workouts you can add: " +
+                                    "Name: (suggested name)" +
+                                    "Date: (suggested date)" +
+                                    "Description: (suggested description)"
                         }
+                        else if (userInputInUI.contains("workout")) {
+                            userInput += "Here are my current workouts and goals: \n"
+                            workoutData.forEach {
+                                userInput += "Workout: ${it.name}, Date: ${it.date}\n"
+                            }
+                            goalsData.forEach {
+                                userInput += "Goal: ${it.name}, Date: ${it.date}\n"
+                            }
+
+                            userInput+= "Provide the answers sports related in the following format:" +
+                                    "Here are some workouts you can add: " +
+                                    "Name: (suggested name)" +
+                                    "Date: (suggested date)" +
+                                    "Description: (suggested description)"
+                        }
+                        else if (userInputInUI.contains("goal")) {
+                            userInput += "Here are my current workouts and goals: \n"
+                            workoutData.forEach {
+                                userInput += "Workout: ${it.name}, Date: ${it.date}\n"
+                            }
+                            goalsData.forEach {
+                                userInput += "Goal: ${it.name}, Date: ${it.date}\n"
+                            }
+
+                            userInput+= "Provide the answers sports related in the following format:" +
+                                    "Here are some goals you can set: " +
+                                    "Name: (suggested name)" +
+                                    "Date: (suggested date)" +
+                                    "Description: (suggested description)"
+                        }
+
+
+
                         response = aiModel.GenerateAIResponse(userInput).toString()
 
                         // Simulate typing effect
